@@ -1,0 +1,44 @@
+name: Email nurture drip
+
+on:
+  schedule:
+    # 09:00 UTC daily — picks up every contact at least once per day-window.
+    - cron: "0 9 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install --no-cache-dir requests
+
+      - name: Run drip
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: python 07-automation-pipeline/email-drip/send_drip.py
+
+      - name: Commit state-file changes
+        run: |
+          if [[ -n "$(git status --porcelain 09-launch/email-drip-state.json)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add 09-launch/email-drip-state.json
+            git commit -m "email-drip state update [skip ci]"
+            git push
+          else
+            echo "No state changes to commit."
+          fi

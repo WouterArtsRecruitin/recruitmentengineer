@@ -1,0 +1,29 @@
+name: "Lead scorer (Pipedrive 16)"
+
+on:
+  schedule:
+    # 09:30 UTC = 11:30 NL — runs after the 09:00 UTC email-drip cron
+    - cron: "30 9 * * *"
+  workflow_dispatch:
+
+jobs:
+  score:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install requests
+
+      - name: Run lead scorer
+        env:
+          PIPEDRIVE_API_TOKEN: ${{ secrets.PIPEDRIVE_API_TOKEN }}
+          PIPEDRIVE_DOMAIN: ${{ secrets.PIPEDRIVE_DOMAIN || 'recruitin' }}
+          PIPEDRIVE_PIPELINE_ID: "16"
+        run: |
+          python3 07-automation-pipeline/auto-poster/scripts/lead_scorer.py --verbose
