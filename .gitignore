@@ -25,3 +25,8 @@ npm-debug.log*
 # Build output (we deploy as static, no build step here)
 dist/
 build/
+
+# Audience exports — PII (even when hashed). Never commit CSVs.
+09-launch/audience-exports/*
+!09-launch/audience-exports/.gitkeep
+!09-launch/audience-exports/README.md

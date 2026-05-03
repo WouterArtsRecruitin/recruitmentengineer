@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>OG Image — Recruitmentengineer.nl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 1200px;
+    height: 630px;
+    overflow: hidden;
+    background: #0A1929;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .canvas {
+    position: relative;
+    width: 1200px;
+    height: 630px;
+    background:
+      radial-gradient(ellipse 900px 500px at 75% 20%, rgba(255, 107, 26, 0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 700px 400px at 10% 90%, rgba(0, 212, 255, 0.06) 0%, transparent 60%),
+      #0A1929;
+    overflow: hidden;
+  }
+
+  /* Blueprint grid overlay */
+  .grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0, 212, 255, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 212, 255, 0.06) 1px, transparent 1px),
+      linear-gradient(rgba(0, 212, 255, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 212, 255, 0.025) 1px, transparent 1px);
+    background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+    background-position: 0 0, 0 0, 0 0, 0 0;
+  }
+
+  /* Corner crosshairs (blueprint marks) */
+  .crosshair {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    color: rgba(0, 212, 255, 0.35);
+  }
+  .crosshair::before, .crosshair::after {
+    content: '';
+    position: absolute;
+    background: currentColor;
+  }
+  .crosshair::before { top: 50%; left: 0; right: 0; height: 1px; }
+  .crosshair::after { left: 50%; top: 0; bottom: 0; width: 1px; }
+
+  .crosshair.tl { top: 28px; left: 28px; }
+  .crosshair.tr { top: 28px; right: 28px; }
+  .crosshair.bl { bottom: 28px; left: 28px; }
+  .crosshair.br { bottom: 28px; right: 28px; }
+
+  /* Top-left doc-id label */
+  .doc-id {
+    position: absolute;
+    top: 56px;
+    left: 72px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    color: #FF6B1A;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .doc-id::before {
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: #FF6B1A;
+    border-radius: 1px;
+  }
+
+  /* Top-right doc reference */
+  .doc-ref {
+    position: absolute;
+    top: 56px;
+    right: 72px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: rgba(148, 163, 184, 0.85);
+    text-align: right;
+    line-height: 1.6;
+  }
+  .doc-ref .lbl { color: #00D4FF; }
+
+  /* Headline block */
+  .headline {
+    position: absolute;
+    top: 138px;
+    left: 72px;
+    right: 72px;
+  }
+  .headline h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: 108px;
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+    color: #FFFFFF;
+    margin: 0;
+  }
+  .headline h1 .accent {
+    color: #FF6B1A;
+  }
+  .headline h1 .line {
+    display: block;
+  }
+
+  /* Orange rule + subtitle */
+  .rule {
+    position: absolute;
+    left: 72px;
+    top: 478px;
+    width: 80px;
+    height: 4px;
+    background: #FF6B1A;
+  }
+
+  .subtitle {
+    position: absolute;
+    left: 72px;
+    top: 502px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.4;
+    color: #E5E0D8;
+    letter-spacing: -0.005em;
+    max-width: 720px;
+  }
+  .subtitle strong {
+    color: #FFFFFF;
+    font-weight: 700;
+  }
+
+  /* Bottom-left module labels (M01..M05) */
+  .modules {
+    position: absolute;
+    left: 72px;
+    bottom: 48px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    color: rgba(0, 212, 255, 0.85);
+  }
+  .modules .mod {
+    padding: 6px 10px;
+    border: 1px solid rgba(0, 212, 255, 0.35);
+    background: rgba(0, 212, 255, 0.04);
+    border-radius: 2px;
+  }
+  .modules .sep {
+    width: 28px;
+    height: 1px;
+    background: rgba(0, 212, 255, 0.35);
+  }
+
+  /* Bottom-right author signature */
+  .signature {
+    position: absolute;
+    right: 72px;
+    bottom: 48px;
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    letter-spacing: 0.12em;
+    color: #94A3B8;
+  }
+  .signature .name {
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .signature .role {
+    color: #FF6B1A;
+    font-weight: 500;
+  }
+
+  /* Subtle scan-line */
+  .scan {
+    position: absolute;
+    left: 0; right: 0;
+    top: 134px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(0, 212, 255, 0.4) 30%, rgba(0, 212, 255, 0.4) 70%, transparent 100%);
+  }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="grid"></div>
+
+    <span class="crosshair tl"></span>
+    <span class="crosshair tr"></span>
+    <span class="crosshair bl"></span>
+    <span class="crosshair br"></span>
+
+    <div class="doc-id">RECRUITIN.NL · STACK 2026</div>
+    <div class="doc-ref">
+      <span class="lbl">DOC-ID</span> · RE/2026-Q2<br>
+      <span class="lbl">REV</span> · 1.4 / LIVE
+    </div>
+
+    <div class="scan"></div>
+
+    <div class="headline">
+      <h1>
+        <span class="line">Recruitment</span>
+        <span class="line">Engineering</span>
+        <span class="line accent">Stack 2026</span>
+      </h1>
+    </div>
+
+    <div class="rule"></div>
+    <div class="subtitle">
+      <strong>5 productie-prompts.</strong> 47% sneller. Gratis.
+    </div>
+
+    <div class="modules">
+      <span class="mod">M01</span>
+      <span class="sep"></span>
+      <span class="mod">M02</span>
+      <span class="sep"></span>
+      <span class="mod">M03</span>
+      <span class="sep"></span>
+      <span class="mod">M04</span>
+      <span class="sep"></span>
+      <span class="mod">M05</span>
+    </div>
+
+    <div class="signature">
+      <div class="name">Ing. W. Arts</div>
+      <div class="role">Recruitment Engineer</div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1127,9 +1127,20 @@ async function handleSubmit(formId, btnId, emailId, successId, errorId) {
       success.classList.add('show');
 
       // ---------- Conversion tracking fires ----------
-      // Meta Pixel — Lead event (Recruitin shared pixel 238226887541404)
+      // Meta Pixel — Lead event (Recruitin shared pixel 238226887541404).
+      // Value 5 EUR is a soft estimate of average lead-magnet quality (1 in 20
+      // converts to a paid touch). Lets Meta optimize for value, not just leads.
       if (window.fbq) {
-        window.fbq('track', 'Lead', { content_name: 'stack-2026-pdf' });
+        window.fbq('track', 'Lead', {
+          content_name: 'stack-2026-pdf',
+          content_category: 'lead_magnet',
+          value: 5,
+          currency: 'EUR'
+        });
+        window.fbq('trackCustom', 'StackPDFRequest', {
+          source: 'recruitmentengineer.nl',
+          campaign: 'stack-2026-leadmagnet'
+        });
       }
       // LinkedIn — conversion track (disabled until LinkedIn Insight Tag + conversion_id are configured)
       // if (window.lintrk) { window.lintrk('track', { conversion_id: <CID> }); }

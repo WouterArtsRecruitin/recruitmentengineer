@@ -1,75 +1,83 @@
 """
-Lead Scorer — Recruitment Engineer Authority pipeline.
+Lead Scorer — Recruitment Engineer Authority pipeline (Pipedrive 16).
 
-Daily cron (GH Actions): recomputes lead_score for every deal in pipeline 16,
-fetches Resend audience-events + Pipedrive notes, applies scoring formula
-from `08-tracking-setup/lead-scoring-system.md`, then PATCHes Pipedrive
-person + deal with new score.
+Scoring rubric (0-100):
+  +15  baseline (deal exists -> had a download)
+  +5   note contains a UTM (`utm_source` or `UTM` block)
+  +10  note contains >=3 UTM tokens (deeply tagged campaign visit)
+  +5   deal_created < 14 days ago
+  +20  note content mentions `pipeline` (engaged via DM)
+  +15  person has 2+ deals in pipeline 16 (re-engagement)
+  +10  per logged activity (call/email/meeting), capped at +30
 
-STUB — not production-ready. Stage 1 implementation:
-- Pipedrive deal-fetch + person-lookup ✓ scaffold
-- Resend audience-events fetch ✗ TODO (Resend API doesn't expose per-contact event-log;
-  alternative: parse webhook-events via local cache)
-- Apollo enrichment ✗ TODO (manual for v1)
-- Score calculation ✓ scaffold
-- Pipedrive PATCH ✓ scaffold
+Stage promotion thresholds:
+  >=80 -> 226 Workshop
+  >=60 -> 225 Discovery
+  >=30 -> 224 Engaged
+   <30 ->  stay at 223 Cold
 
-Auth: Personal API Token (40-char hex), query-param style.
+Never auto-demote. If current stage > target stage, leave deal alone.
+
+Auth: Pipedrive Personal API Token via `?api_token=` query param.
 See PIPEDRIVE_AUTH_REGEL in ~/CLAUDE.md.
+
+CLI:
+  python3 lead_scorer.py --dry-run --verbose
+  python3 lead_scorer.py --verbose         # live, will PUT stage moves
 """
 
-import os
-import sys
+import argparse
 import json
+import os
+import re
+import sys
 from datetime import datetime, timezone
 from urllib.parse import urlencode
 
 import requests
 
-# === Config ===
+# --- Config ---
 PIPEDRIVE_DOMAIN = os.getenv("PIPEDRIVE_DOMAIN", "recruitin")
-PIPEDRIVE_API_KEY = os.getenv("PIPEDRIVE_API_KEY")
-PIPEDRIVE_PIPELINE_ID = int(os.getenv("PIPEDRIVE_PIPELINE_ID", "16"))
-PIPEDRIVE_LEAD_SCORE_FIELD_KEY = os.getenv("PIPEDRIVE_LEAD_SCORE_FIELD_KEY", "")
-RESEND_API_KEY = os.getenv("RESEND_API_KEY")
-RESEND_AUDIENCE_ID = os.getenv("RESEND_AUDIENCE_ID")
-SLACK_WEBHOOK = os.getenv("SLACK_WEBHOOK_URL_RE_AUTHORITY", "")
+PIPEDRIVE_API_TOKEN = (
+    os.getenv("PIPEDRIVE_API_TOKEN")
+    or os.getenv("PIPEDRIVE_API_KEY")
+    or ""
+)
+PIPELINE_ID = int(os.getenv("PIPEDRIVE_PIPELINE_ID", "16"))
 
 PD_BASE = f"https://{PIPEDRIVE_DOMAIN}.pipedrive.com/api/v1"
 
-# Stage IDs from pipedrive-pipeline-mapping.md
+# Stage IDs — verified live 2026-05-03 against pipeline 16
 STAGE_COLD = 223
 STAGE_ENGAGED = 224
 STAGE_DISCOVERY = 225
 STAGE_WORKSHOP = 226
 
-# Score thresholds
+STAGE_NAMES = {
+    STAGE_COLD: "Cold",
+    STAGE_ENGAGED: "Engaged",
+    STAGE_DISCOVERY: "Discovery",
+    STAGE_WORKSHOP: "Workshop",
+}
+
 THRESH_ENGAGED = 30
 THRESH_DISCOVERY = 60
 THRESH_WORKSHOP = 80
 
+UTM_RE = re.compile(r"utm_[a-z]+", re.IGNORECASE)
 
-# === Pipedrive helpers ===
+
+# --- Pipedrive HTTP helpers (Personal Token via query param) ---
 def pd_get(path, **params):
-    params["api_token"] = PIPEDRIVE_API_KEY
+    params["api_token"] = PIPEDRIVE_API_TOKEN
     r = requests.get(f"{PD_BASE}{path}?{urlencode(params)}", timeout=30)
     r.raise_for_status()
     return r.json()
 
 
-def pd_patch(path, body):
+def pd_put(path, body):
     r = requests.put(
-        f"{PD_BASE}{path}?api_token={PIPEDRIVE_API_KEY}",
-        json=body,
-        timeout=30,
-    )
-    r.raise_for_status()
-    return r.json()
-
-
-def pd_post(path, body):
-    r = requests.post(
-        f"{PD_BASE}{path}?api_token={PIPEDRIVE_API_KEY}",
+        f"{PD_BASE}{path}?api_token={PIPEDRIVE_API_TOKEN}",
         json=body,
         timeout=30,
     )
@@ -78,114 +86,106 @@ def pd_post(path, body):
 
 
 def fetch_pipeline_deals(pipeline_id):
-    """Paginated fetch of all deals in pipeline."""
+    """Paginated fetch of all deals in a pipeline.
+
+    NOTE: `/v1/deals?pipeline_id=X` silently ignores the filter and returns
+    deals from every pipeline. The reliable way to get only-this-pipeline
+    deals is `/v1/pipelines/{id}/deals`.
+    """
     deals = []
     start = 0
     limit = 100
     while True:
         data = pd_get(
-            "/deals",
-            pipeline_id=pipeline_id,
-            status="open",
+            f"/pipelines/{pipeline_id}/deals",
             start=start,
             limit=limit,
         )
         items = data.get("data") or []
-        deals.extend(items)
-        more = data.get("additional_data", {}).get("pagination", {}).get("more_items_in_collection")
+        # Defensive: only keep open deals (status field on every deal)
+        deals.extend(d for d in items if d.get("status") == "open")
+        more = (
+            data.get("additional_data", {})
+            .get("pagination", {})
+            .get("more_items_in_collection")
+        )
         if not more:
             break
         start += limit
     return deals
 
 
-def fetch_person(person_id):
-    return pd_get(f"/persons/{person_id}").get("data") or {}
-
-
 def fetch_deal_notes(deal_id):
-    return pd_get("/notes", deal_id=deal_id).get("data") or []
+    return pd_get("/notes", deal_id=deal_id, limit=100).get("data") or []
 
 
-# === Resend helpers (TODO — Resend API doesn't directly expose per-contact event log) ===
-def fetch_email_events_for(email):
-    """STUB: Resend API doesn't have per-recipient event-log endpoint.
-    Alternative paths:
-    1. Parse webhook-event log from local cache / D1 / Supabase
-    2. Use Resend's `/emails` endpoint with from-filter and parse event status
-    3. Skip — rely on Pipedrive notes (manual) for v1
-    """
-    return {
-        "opens": 0,
-        "clicks": 0,
-    }
+def fetch_deal_activities(deal_id):
+    return pd_get("/activities", deal_id=deal_id, limit=100).get("data") or []
 
 
-# === Apollo enrichment (TODO — manual for v1) ===
-def fetch_apollo_enrichment(email):
-    """STUB: For v1, Apollo enrichment is manual via Pipedrive UI.
-    For v2: integrate Apollo MCP / API directly.
-    """
-    return None
+def count_person_deals_in_pipeline(person_id, pipeline_id):
+    """Count deals (open + closed) for this person inside pipeline_id."""
+    if not person_id:
+        return 0
+    data = pd_get(f"/persons/{person_id}/deals", limit=100)
+    items = data.get("data") or []
+    return sum(1 for d in items if d.get("pipeline_id") == pipeline_id)
 
 
-# === Scoring ===
-def score_lead(deal, person, notes, email_events, enrichment):
-    """Apply scoring formula. Returns score 0-100."""
+# --- Scoring ---
+def parse_add_time(s):
+    if not s:
+        return None
+    # Pipedrive returns "YYYY-MM-DD HH:MM:SS" UTC
+    try:
+        return datetime.strptime(s, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
+    except ValueError:
+        return None
+
+
+def score_deal(deal, notes, activities, person_deal_count):
+    """Return (score, breakdown_list)."""
     score = 0
     breakdown = []
 
-    # Engagement
-    score += 20
-    breakdown.append(("PDF download", 20))
+    # Baseline: deal exists -> had a download
+    score += 15
+    breakdown.append(("baseline_download", 15))
 
-    open_pts = min(email_events["opens"] * 5, 15)
-    if open_pts:
-        score += open_pts
-        breakdown.append((f"Email opens ({email_events['opens']})", open_pts))
-
-    click_pts = min(email_events["clicks"] * 10, 20)
-    if click_pts:
-        score += click_pts
-        breakdown.append((f"Email clicks ({email_events['clicks']})", click_pts))
-
-    # Returning visits — count "UTM" mentions in notes (rough proxy)
-    utm_notes = sum(1 for n in notes if "UTM" in n.get("content", ""))
-    return_pts = min(max(utm_notes - 1, 0) * 5, 10)
-    if return_pts:
-        score += return_pts
-        breakdown.append((f"Returning visits (~{utm_notes - 1})", return_pts))
-
-    # LinkedIn engagement (manual tag in note: "LINKEDIN_ENGAGEMENT")
-    li_count = sum(1 for n in notes if "LINKEDIN_ENGAGEMENT" in n.get("content", ""))
-    li_pts = min(li_count * 10, 20)
-    if li_pts:
-        score += li_pts
-        breakdown.append((f"LinkedIn engagement ({li_count})", li_pts))
-
-    # Conversion
-    if any("CALENDLY_CLICK" in n.get("content", "") for n in notes):
-        score += 25
-        breakdown.append(("Calendly click", 25))
-
-    if any("WORKSHOP_ATTENDED" in n.get("content", "") for n in notes):
-        score += 30
-        breakdown.append(("Workshop attended", 30))
-
-    # ICP-fit (Apollo)
-    if enrichment:
-        if enrichment.get("title") in ("HR Director", "CEO", "Chief HR Officer", "VP HR"):
-            score += 15
-            breakdown.append(("Title match", 15))
-        size = enrichment.get("company_size", 0)
-        if 50 <= size <= 800:
+    # UTM presence in any note
+    note_blob = "\n".join((n.get("content") or "") for n in notes)
+    utm_tokens = UTM_RE.findall(note_blob)
+    unique_utms = {t.lower() for t in utm_tokens}
+    if unique_utms:
+        score += 5
+        breakdown.append(("utm_present", 5))
+        if len(unique_utms) >= 3:
             score += 10
-            breakdown.append(("Size match", 10))
-        if enrichment.get("sector") in (
-            "oil-gas", "construction", "manufacturing", "automation", "renewable"
-        ):
-            score += 10
-            breakdown.append(("Sector match", 10))
+            breakdown.append((f"utm_multi_{len(unique_utms)}", 10))
+
+    # Recency: <14 days
+    add_time = parse_add_time(deal.get("add_time"))
+    if add_time:
+        age_days = (datetime.now(timezone.utc) - add_time).days
+        if age_days < 14:
+            score += 5
+            breakdown.append((f"recent_{age_days}d", 5))
+
+    # Pipeline keyword in any note
+    if any("pipeline" in (n.get("content") or "").lower() for n in notes):
+        score += 20
+        breakdown.append(("note_keyword_pipeline", 20))
+
+    # Returning lead: 2+ deals in pipeline 16
+    if person_deal_count >= 2:
+        score += 15
+        breakdown.append((f"reengaged_{person_deal_count}deals", 15))
+
+    # Logged activities: +10 each, cap +30
+    activity_pts = min(len(activities) * 10, 30)
+    if activity_pts:
+        score += activity_pts
+        breakdown.append((f"activities_{len(activities)}", activity_pts))
 
     return min(score, 100), breakdown
 
@@ -200,73 +200,103 @@ def stage_for_score(score):
     return STAGE_COLD
 
 
-def update_score(person_id, deal_id, new_score, breakdown):
-    """PATCH person + deal with new score, append history-note."""
-    if not PIPEDRIVE_LEAD_SCORE_FIELD_KEY:
-        print(f"  [WARN] No PIPEDRIVE_LEAD_SCORE_FIELD_KEY set — skipping field update")
-        return
-    body = {PIPEDRIVE_LEAD_SCORE_FIELD_KEY: new_score}
-    pd_patch(f"/persons/{person_id}", body)
-    pd_patch(f"/deals/{deal_id}", body)
-
-    # Audit-trail note
-    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
-    breakdown_str = "\n".join(f"  - {label}: +{pts}" for label, pts in breakdown)
-    pd_post("/notes", {
-        "deal_id": deal_id,
-        "person_id": person_id,
-        "content": f"[{timestamp}] Lead Score: {new_score}/100\n{breakdown_str}",
-    })
-
-
-def slack_notify_hot(deal, person, score, breakdown):
-    """Notify on score >= 80 (Workshop stage)."""
-    if not SLACK_WEBHOOK:
-        return
-    deal_url = f"https://{PIPEDRIVE_DOMAIN}.pipedrive.com/deal/{deal['id']}"
-    msg = (
-        f"🔥 HOT LEAD — {person.get('name', '?')} ({person.get('email', [{}])[0].get('value', '?')})"
-        f" — score {score} — {deal_url}"
-    )
-    requests.post(SLACK_WEBHOOK, json={"text": msg}, timeout=10)
-
-
-# === Main ===
+# --- Main ---
 def main():
-    if not PIPEDRIVE_API_KEY:
-        print("ERROR: PIPEDRIVE_API_KEY not set", file=sys.stderr)
+    ap = argparse.ArgumentParser(description="Pipedrive lead scorer for pipeline 16.")
+    ap.add_argument("--dry-run", action="store_true", help="Compute only, no PUT calls.")
+    ap.add_argument("--verbose", action="store_true", help="Verbose per-deal logging.")
+    args = ap.parse_args()
+
+    if not PIPEDRIVE_API_TOKEN:
+        print("ERROR: PIPEDRIVE_API_TOKEN not set", file=sys.stderr)
         sys.exit(1)
 
-    print(f"[{datetime.now(timezone.utc).isoformat()}] Lead-scorer cron run")
-    deals = fetch_pipeline_deals(PIPEDRIVE_PIPELINE_ID)
-    print(f"Fetched {len(deals)} open deals in pipeline {PIPEDRIVE_PIPELINE_ID}")
+    if args.verbose:
+        print(
+            f"[lead-scorer] domain={PIPEDRIVE_DOMAIN} pipeline={PIPELINE_ID} "
+            f"stages={STAGE_NAMES} dry_run={args.dry_run}"
+        )
 
-    updates = 0
-    hot = 0
+    deals = fetch_pipeline_deals(PIPELINE_ID)
+    if args.verbose:
+        print(f"[lead-scorer] fetched {len(deals)} open deals")
+
+    report = {"scanned": 0, "moved": 0, "errors": 0, "details": []}
+
     for deal in deals:
-        person_id = deal.get("person_id", {}).get("value") if isinstance(deal.get("person_id"), dict) else deal.get("person_id")
-        if not person_id:
-            continue
-        person = fetch_person(person_id)
-        email = (person.get("email") or [{}])[0].get("value")
-        if not email:
-            continue
-        notes = fetch_deal_notes(deal["id"])
-        email_events = fetch_email_events_for(email)
-        enrichment = fetch_apollo_enrichment(email)
-        score, breakdown = score_lead(deal, person, notes, email_events, enrichment)
+        report["scanned"] += 1
+        deal_id = deal["id"]
+        try:
+            person_id = (
+                deal.get("person_id", {}).get("value")
+                if isinstance(deal.get("person_id"), dict)
+                else deal.get("person_id")
+            )
+            notes = fetch_deal_notes(deal_id)
+            activities = fetch_deal_activities(deal_id)
+            person_deal_count = count_person_deals_in_pipeline(person_id, PIPELINE_ID)
 
-        # Compare with current score
-        current = (deal.get(PIPEDRIVE_LEAD_SCORE_FIELD_KEY) or 0) if PIPEDRIVE_LEAD_SCORE_FIELD_KEY else 0
-        if abs(score - current) >= 5:
-            print(f"  Updating deal {deal['id']} ({email}): {current} → {score}")
-            update_score(person_id, deal["id"], score, breakdown)
-            updates += 1
-            if score >= THRESH_WORKSHOP and current < THRESH_WORKSHOP:
-                slack_notify_hot(deal, person, score, breakdown)
-                hot += 1
+            score, breakdown = score_deal(deal, notes, activities, person_deal_count)
+            current_stage = deal.get("stage_id")
+            target_stage = stage_for_score(score)
 
-    print(f"Done. {updates} updated, {hot} new hot leads.")
+            entry = {
+                "deal_id": deal_id,
+                "name": deal.get("title"),
+                "old_stage": current_stage,
+                "old_stage_name": STAGE_NAMES.get(current_stage, str(current_stage)),
+                "new_stage": current_stage,
+                "new_stage_name": STAGE_NAMES.get(current_stage, str(current_stage)),
+                "score": score,
+                "score_breakdown": breakdown,
+                "action": "skip_already_correct",
+            }
+
+            if target_stage == current_stage:
+                if args.verbose:
+                    print(f"  deal {deal_id} score={score} stage={current_stage} (no move)")
+            elif target_stage < current_stage:
+                # Never auto-demote
+                entry["action"] = "skip_no_demote"
+                if args.verbose:
+                    print(
+                        f"  deal {deal_id} score={score} would demote "
+                        f"{current_stage}->{target_stage} — skipped"
+                    )
+            else:
+                entry["new_stage"] = target_stage
+                entry["new_stage_name"] = STAGE_NAMES.get(target_stage, str(target_stage))
+                entry["action"] = "promote"
+                if args.dry_run:
+                    if args.verbose:
+                        print(
+                            f"  [dry] deal {deal_id} score={score} "
+                            f"{current_stage}->{target_stage}"
+                        )
+                else:
+                    pd_put(f"/deals/{deal_id}", {"stage_id": target_stage})
+                    if args.verbose:
+                        print(
+                            f"  deal {deal_id} score={score} "
+                            f"PROMOTED {current_stage}->{target_stage}"
+                        )
+                report["moved"] += 1
+
+            report["details"].append(entry)
+        except Exception as e:
+            report["errors"] += 1
+            report["details"].append(
+                {"deal_id": deal_id, "error": str(e), "action": "error"}
+            )
+            if args.verbose:
+                print(f"  deal {deal_id} ERROR: {e}", file=sys.stderr)
+
+    print(json.dumps(report, indent=2, default=str))
+    print(
+        f"[lead-scorer] summary: scanned={report['scanned']} "
+        f"moved={report['moved']} errors={report['errors']} "
+        f"dry_run={args.dry_run}"
+    )
 
 
 if __name__ == "__main__":
