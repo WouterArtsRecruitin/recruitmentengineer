@@ -330,6 +330,19 @@ A006,RE-MOFU-Stack-Downloaders-30d,custom_pixel,Stack2026Download,30,500,active
 
 ---
 
+## ⚙️ AD-SET OPTIMIZATION RULE — LOCKED
+
+Voor **elke** ad-set die deze audiences gebruikt, configureer in Ads Manager:
+
+- **Performance Goal:** `Maximize number of conversions`
+- **Conversion event:** `Lead` (uit pixel `238226887541404`)
+- **Conversion window:** 7-day click + 1-day view
+- **NOOIT:** Maximize landing page views / link clicks / ThruPlay / impressions
+
+Reden: lead-optimization is value-aware (Lead event vuurt nu met `value=5 EUR`). Click-optimization serveert aan scroll-clickers met lage intent. Zie `meta-pixel-events.md` § AD-SET OPTIMIZATION RULE voor de volledige onderbouwing en payload-spec.
+
+---
+
 ## 8. Cross-reference
 
 - Event payload definitions: `meta-pixel-events.md`

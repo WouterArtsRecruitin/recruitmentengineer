@@ -29,19 +29,42 @@ USER COMPLETES STRIPE       → Purchase                 (PLACEHOLDER — wacht 
 - **Frequency:** ~100% sessions (baseline).
 - **Payload:** Default Meta Pixel payload (URL, referrer, user-agent, timestamp).
 
-### `Lead`
+### `Lead` — PRIMARY CONVERSION EVENT (LIVE per Phase 2 — N5)
 - **Trigger:** On subscribe form-submit success (after `/api/subscribe` returns 200 OK).
 - **Code location:** `06-landing-page/public/index.html` — inline JS na fetch-success.
 - **Frequency:** ~5-10% sessions (baseline target).
-- **Payload:**
+- **Payload (LIVE):**
   ```js
   fbq('track', 'Lead', {
-    content_name: 'Stack 2026 PDF',
+    content_name: 'stack-2026-pdf',
     content_category: 'lead_magnet',
-    value: 0.00,
+    value: 5,
     currency: 'EUR'
   });
+  fbq('trackCustom', 'StackPDFRequest', {
+    source: 'recruitmentengineer.nl',
+    campaign: 'stack-2026-leadmagnet'
+  });
   ```
+- **Why value=5:** soft estimate of average lead-magnet value. Lets Meta optimize for **value-aware lead-quality**, niet pure lead-count.
+
+### ⚙️ AD-SET OPTIMIZATION RULE — LOCKED
+
+**Cold + Warm + Hot ad-sets: optimize voor `Lead` event (OFFSITE_CONVERSIONS) — NIET voor LANDING_PAGE_VIEWS, LINK_CLICKS, of IMPRESSIONS.**
+
+| Stage | Optimization Goal | Conversion Window | Why |
+|-------|-------------------|-------------------|-----|
+| Cold (PDF) | `OFFSITE_CONVERSIONS` op `Lead` | 7-day click + 1-day view | Skip de "first warmup op clicks"-fase. Met value-aware Lead haal je in 5-7 dagen voldoende signal voor conversion-optimization, ook bij €25-50/dag |
+| Warm (Tier 1) | `OFFSITE_CONVERSIONS` op `Purchase` event | 7-day click + 1-day view | Tier 1 €97 — pixel `Purchase` event vuren post-Stripe-checkout |
+| Hot (Tier 2) | `OFFSITE_CONVERSIONS` op `Purchase` (Tier 2 SKU) | 7-day click + 1-day view | Idem voor €497 |
+
+⚠️ **Géén LANDING_PAGE_VIEWS-warmup-fase.** Reden: clicks ≠ leads. Algoritme dat op clicks of LP-views optimaliseert serveert aan scroll-clickers met lage intent → spend gaat naar zwakke leads. Lead-optimization (value-aware) duwt naar mensen die volledig converteren.
+
+**Wat dit betekent in Ads Manager (per ad-set):**
+- Performance Goal: "Maximize number of conversions"
+- Conversion event: `Lead` (geselecteerd uit pixel `238226887541404`)
+- Conversion window: 7-day click, 1-day view (default)
+- NIET: "Maximize number of landing page views" / "Maximize link clicks" / "Maximize ThruPlay"
 
 ---
 
