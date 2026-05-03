@@ -1,8 +1,68 @@
-# Higgsfield Visual Factory
+# Higgsfield Visual Factory — Soul-2 Powered
 
-Template-library for the Recruitin Authority Campaign. Copy-paste these prompts into the Higgsfield UI (Soul 2, Nano Banana Pro, Marketing Studio) or pass them through the Higgsfield MCP. No code here — humans (or the Ad Generator agent) consume these as plain-text strings.
+Template-library for the Recruitin Authority Campaign. Copy-paste these prompts into the Higgsfield UI (Soul 2 / Nano Banana 2 / Marketing Studio) or pass them through the Higgsfield MCP. No code here — humans (or the Ad Generator agent) consume these as plain-text strings.
 
 > **Brand DNA = locked.** Every render must match the visual fingerprint below. Use `identity-lock-rules.md` as a pre-flight checklist before sending a batch to render.
+
+---
+
+## What is Higgsfield Soul-2?
+
+Higgsfield **Soul-2** is a character-locked image-generation model. You train a "Soul" once on real photos of a person, and from that point forward every render automatically preserves face geometry, micro-expression range, skin texture, and hair pattern across new prompts. No more dual-reference fragility — no more uploading 2–3 anchor photos per render hoping for likeness.
+
+**For this campaign:**
+
+| Field | Value |
+|-------|-------|
+| **Soul-ID** | `948dbc10-ba8d-406c-b771-e15610ae8674` |
+| **Soul name** | Ing W Arts Recruitment Engineer |
+| **Status** | Trained + ready (May 2026) |
+
+This Soul-ID **MUST** be passed in every Set-A hero portrait + every Set-C portrait-based ad. Set-B brand-visual-only assets (data-viz, typography-only carousel covers, abstract PDF cover) skip Soul and use **Nano Banana 2** instead — they don't need a face-lock.
+
+### Why Soul-2 over dual-reference Nano Banana
+
+- **Speed:** ~30 sec/render vs ~2 min with dual-reference upload + retry loops
+- **Identity preservation:** locked at training-time, drift = near-zero across 100+ renders
+- **Cost:** ~3–5 credits/render (Soul) vs 8–12 credits (dual-ref iterations)
+- **Consistency across a campaign-set:** all 10 Set-A portraits feel like one shoot, not 10 different AI guesses
+
+---
+
+## How to invoke Soul-ID
+
+### Higgsfield UI (manual)
+1. Open Higgsfield → Soul 2 tab
+2. Pick Soul `Ing W Arts Recruitment Engineer` from the dropdown (this auto-fills `soul_id: 948dbc10-...`)
+3. Paste the prompt block from any Set-A template
+4. Fill `[SETTING]` `[POSE]` `[LIGHTING]` `[CAMERA]` from the template's variables-matrix
+5. Set aspect ratio per template
+6. Render → check against `identity-lock-rules.md` checklist
+7. Reject + regen if any locked element drifts
+
+### Higgsfield MCP (programmatic)
+Pass `soul_id` explicitly in the request payload:
+```
+{
+  "tool": "soul2",
+  "soul_id": "948dbc10-ba8d-406c-b771-e15610ae8674",
+  "template": "setA.portrait-03",
+  "variables": { "setting": "blueprint-tafel", "pose": "examining-blueprint" },
+  "aspect": "4:5"
+}
+```
+
+### Higgsfield API (curl-style)
+```
+POST /v1/soul2/generate
+Headers: Authorization: Bearer <HIGGSFIELD_API_KEY>
+Body: {
+  "soul_id": "948dbc10-ba8d-406c-b771-e15610ae8674",
+  "prompt": "<rendered prompt-string from Set-A template>",
+  "negative_prompt": "<from template>",
+  "aspect_ratio": "4:5"
+}
+```
 
 ---
 
@@ -10,23 +70,24 @@ Template-library for the Recruitin Authority Campaign. Copy-paste these prompts 
 
 | File | Tool | Use |
 |------|------|-----|
-| `SET-A-hero-portraits.md` | Soul 2 | 10 hero portraits of Ing. W. Arts in industrial / authority settings |
-| `SET-B-brand-visuals.md` | Nano Banana Pro | Data viz, quote cards, carousel covers, lead magnet cover, LinkedIn cover banner |
-| `SET-C-marketing-studio.md` | Marketing Studio | Ad-format-specific creatives (9:16, 1:1, 16:9, 4:5) for Meta + LinkedIn |
+| `SET-A-hero-portraits-soul.md` | Soul 2 | 10 hero portraits, Soul-ID locked. ALL portraits MUST reference Soul-ID `948dbc10-ba8d-406c-b771-e15610ae8674`. |
+| `SET-A-hero-portraits.md` | Soul 2 (legacy) | Original dual-ref version. Kept for archive. New work = use SET-A-hero-portraits-soul.md. |
+| `SET-B-brand-visuals.md` | Nano Banana 2 | 8 brand visuals: data-viz, quote-card template, carousel covers, PDF cover, LinkedIn banner. **No portraits → no Soul-ID.** |
+| `SET-C-marketing-studio.md` | Marketing Studio (Soul-locked) | 8 ad-format-specific portrait creatives. Soul-ID required for every variant with a face. |
 | `identity-lock-rules.md` | All | Reference checklist — what MUST stay consistent across every render |
 
 ---
 
 ## Naming convention
 
-Output files should follow: `{set}-{template-id}-{variable}-{date}.{ext}`
+Output files: `{set}-{template-id}-{variable}-{date}.{ext}`
 
 Examples:
 - `setA-portrait-01-productiehal-arms-crossed-2026-05-03.png`
 - `setB-quote-card-helft-werkt-niet-2026-05-03.png`
 - `setC-reel-916-hook-card-cold-tofu-2026-05-03.png`
 
-Store in `02-higgsfield-assets/` per existing repo convention. Each asset that becomes a Seedance input also lives in `seedance-inputs/` (mirrored copy).
+Store in `02-higgsfield-assets/` per existing repo convention. Each asset that becomes a Seedance input also lives in `seedance-factory/inputs/` (mirrored copy).
 
 ---
 
@@ -39,7 +100,7 @@ Store in `02-higgsfield-assets/` per existing repo convention. Each asset that b
 - `#F5F0EB` — Warm grijs (light backgrounds)
 - `#1A1A1A` — Deep zwart (body type)
 
-**Wouter visual DNA (locked across every Soul 2 render):**
+**Wouter visual DNA (Soul-2 handles this — these notes describe what the trained Soul preserves):**
 - Light grey wool blazer
 - White shirt (no pattern)
 - Black knit tie (textured)
@@ -71,39 +132,37 @@ Store in `02-higgsfield-assets/` per existing repo convention. Each asset that b
 
 ---
 
-## How to use (Higgsfield UI)
+## Production flow
 
-1. Open Soul 2 / Nano Banana Pro / Marketing Studio
-2. Paste prompt block (everything between the triple-backticks)
-3. Replace `[VARIABLES]` (e.g. `[SETTING]`, `[POSE]`, `[QUOTE]`) with the values from the template's "Variables to fill" list
-4. Set aspect ratio per template
-5. Run + check against `identity-lock-rules.md` checklist
-6. Reject + regen if any locked element drifts
-
-## How to use (programmatic via Ad Generator agent)
-
-The agent writes a JSON brief like:
-```json
-{
-  "tool": "soul2",
-  "template": "setA.portrait-03",
-  "variables": { "setting": "blueprint-tafel", "pose": "examining-blueprint" },
-  "aspect": "4:5"
-}
 ```
-Then renders the prompt by substitution and submits via Higgsfield MCP.
+PICK TEMPLATE (Set A / Set B / Set C)
+    ↓
+FILL VARIABLES ([SETTING] / [POSE] / [LIGHTING] / [CAMERA] / [ASPECT])
+    ↓
+SUBMIT WITH SOUL-ID (Set A / Set C portrait variants only)
+    ↓
+RECEIVE IMAGE
+    ↓
+QA via identity-lock-rules.md checklist
+    ↓
+REJECT + REGEN if any locked element drifts
+    ↓
+EXPORT to 02-higgsfield-assets/<subfolder>/
+    ↓
+MIRROR to seedance-factory/inputs/ (if motion-bound)
+```
 
 ---
 
 ## Total prompt-count in this factory
 
-- Set A — 10 hero portraits
-- Set B — 8 brand visuals (3 data-viz, 1 quote-card template, 2 carousel covers, 1 PDF cover, 1 LinkedIn banner)
-- Set C — 8 marketing-studio ads (2 per format × 4 formats)
+- Set A — 10 hero portraits (Soul-ID locked)
+- Set B — 8 brand visuals (no portrait → Nano Banana 2)
+- Set C — 8 marketing-studio ads (Soul-ID locked on portrait variants)
 - **Total: 26 templates** + 1 identity-lock reference
 
 ---
 
 ## Version
 
-v1.0 — Mei 2026 — initial library locked to brand bible v1.3 (light grey blazer + round acetate + salt-and-pepper).
+v2.0 — Mei 2026 — Soul-ID-locked rewrite. Soul `948dbc10-ba8d-406c-b771-e15610ae8674` (Ing W Arts Recruitment Engineer) trained + production-ready. Replaces v1.0 dual-ref workflow.

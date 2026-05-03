@@ -89,11 +89,21 @@ export default async function handler(req, res) {
     return res.status(429).json({ error: 'rate_limited' });
   }
 
-  const { email, source } = req.body || {};
+  const { email, source, utm_source, utm_medium, utm_campaign, utm_content, referrer } = req.body || {};
   if (typeof email !== 'string' || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return res.status(400).json({ error: 'invalid_email' });
   }
   const normalizedEmail = email.trim().toLowerCase();
+
+  // Sanitize UTM-set: trim, cap length, default to empty string
+  const sanitize = (v) => (typeof v === 'string' ? v.trim().slice(0, 200) : '');
+  const utm = {
+    utm_source: sanitize(utm_source),
+    utm_medium: sanitize(utm_medium),
+    utm_campaign: sanitize(utm_campaign),
+    utm_content: sanitize(utm_content),
+    referrer: sanitize(referrer),
+  };
 
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
   const RESEND_AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID;
@@ -178,6 +188,7 @@ export default async function handler(req, res) {
           email: normalizedEmail,
           name: displayName,
           source: source || 'landing',
+          utm,
           apiKey: PIPEDRIVE_API_KEY,
           domain: PIPEDRIVE_DOMAIN,
           pipelineId: PIPEDRIVE_PIPELINE_ID,
@@ -195,7 +206,7 @@ export default async function handler(req, res) {
   }
 }
 
-async function syncToPipedrive({ email, name, source, apiKey, domain, pipelineId, stageId }) {
+async function syncToPipedrive({ email, name, source, utm, apiKey, domain, pipelineId, stageId }) {
   const base = `https://${domain}.pipedrive.com/api/v1`;
   const auth = `api_token=${encodeURIComponent(apiKey)}`;
 
@@ -252,13 +263,27 @@ async function syncToPipedrive({ email, name, source, apiKey, domain, pipelineId
   const dealData = await dealRes.json();
   const dealId = dealData?.data?.id;
   if (dealId) {
+    // Build UTM-block — only include rows with values, skip empty ones for cleanliness
+    const utmRows = utm
+      ? [
+          ['utm_source', utm.utm_source],
+          ['utm_medium', utm.utm_medium],
+          ['utm_campaign', utm.utm_campaign],
+          ['utm_content', utm.utm_content],
+          ['referrer', utm.referrer],
+        ].filter(([, v]) => v && v.length > 0)
+      : [];
+    const utmBlock = utmRows.length
+      ? `\n\n--- UTM / attribution ---\n${utmRows.map(([k, v]) => `${k}: ${v}`).join('\n')}`
+      : '';
+
     await fetch(`${base}/notes?${auth}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         deal_id: dealId,
         person_id: personId,
-        content: `Authority Lead — Stack 2026 download via recruitmentengineer.nl (source: ${source})`,
+        content: `Authority Lead — Stack 2026 download via recruitmentengineer.nl (source: ${source})${utmBlock}`,
       }),
     }).catch((e) => console.error('Pipedrive note add failed (non-blocking):', e));
   }

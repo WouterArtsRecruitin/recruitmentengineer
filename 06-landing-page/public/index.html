@@ -690,6 +690,68 @@ footer .legal .build { color: var(--orange); }
   }
 }
 </style>
+
+<!-- =========================================================
+     TRACKING INFRASTRUCTURE — A5 from FINAL AUDIT
+     v1: fires immediately (no cookie banner yet).
+     TODO: when cookie-banner is added, gate fbq/lintrk/gtag
+     init on consent.given === true (see consent-gate comments).
+     ========================================================= -->
+
+<!-- ---------- Meta Pixel — Recruitin shared pixel ---------- -->
+<!-- CONSENT-GATE: wrap this block in `if (window.consent?.marketing)` once banner exists -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '238226887541404');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=238226887541404&ev=PageView&noscript=1"/></noscript>
+<!-- ---------- End Meta Pixel ---------- -->
+
+<!-- ---------- LinkedIn Insight Tag ---------- -->
+<!-- CONSENT-GATE: wrap in `if (window.consent?.marketing)` once banner exists -->
+<!-- TODO: replace LI_PARTNER_ID_PLACEHOLDER with real LinkedIn Partner ID -->
+<script type="text/javascript">
+_linkedin_partner_id = "LI_PARTNER_ID_PLACEHOLDER";
+window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+</script>
+<script type="text/javascript">
+(function(l) {
+if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+window.lintrk.q=[]}
+var s = document.getElementsByTagName("script")[0];
+var b = document.createElement("script");
+b.type = "text/javascript";b.async = true;
+b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+s.parentNode.insertBefore(b, s);})(window.lintrk);
+</script>
+<noscript>
+<img height="1" width="1" style="display:none;" alt=""
+  src="https://px.ads.linkedin.com/collect/?pid=LI_PARTNER_ID_PLACEHOLDER&fmt=gif" />
+</noscript>
+<!-- ---------- End LinkedIn Insight Tag ---------- -->
+
+<!-- ---------- GA4 — placeholder, uncomment when property exists ----------
+     TODO: replace G-XXXXXXXXXX with real GA4 measurement ID, then uncomment.
+     CONSENT-GATE: wrap in `if (window.consent?.statistics)` once banner exists.
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
+     ---------- End GA4 placeholder ---------- -->
+
 </head>
 <body>
 
@@ -1015,6 +1077,18 @@ footer .legal .build { color: var(--orange); }
 </footer>
 
 <script>
+// Capture UTM params + referrer at page-load (persist across form interactions)
+const __utm = (function() {
+  const params = new URLSearchParams(location.search);
+  return {
+    utm_source: params.get('utm_source') || '',
+    utm_medium: params.get('utm_medium') || '',
+    utm_campaign: params.get('utm_campaign') || '',
+    utm_content: params.get('utm_content') || '',
+    referrer: document.referrer || ''
+  };
+})();
+
 async function handleSubmit(formId, btnId, emailId, successId, errorId) {
   const form = document.getElementById(formId);
   if (!form) return;
@@ -1040,7 +1114,11 @@ async function handleSubmit(formId, btnId, emailId, successId, errorId) {
       const response = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, source: 'recruitmentengineer.nl' })
+        body: JSON.stringify({
+          email,
+          source: 'recruitmentengineer.nl',
+          ...__utm
+        })
       });
 
       if (!response.ok) throw new Error('Subscribe failed');
@@ -1048,6 +1126,16 @@ async function handleSubmit(formId, btnId, emailId, successId, errorId) {
       form.style.display = 'none';
       success.classList.add('show');
 
+      // ---------- Conversion tracking fires ----------
+      // Meta Pixel — Lead event (Recruitin shared pixel 238226887541404)
+      if (window.fbq) {
+        window.fbq('track', 'Lead', { content_name: 'stack-2026-pdf' });
+      }
+      // LinkedIn — conversion track (TODO: replace CID_PLACEHOLDER with real conversion_id from LinkedIn Campaign Manager)
+      if (window.lintrk) {
+        window.lintrk('track', { conversion_id: 'CID_PLACEHOLDER' });
+      }
+      // GA4 — keeps existing event (fires only if GA4 snippet uncommented in <head>)
       if (window.gtag) {
         window.gtag('event', 'lead_magnet_download', { source: 'stack_2026' });
       }

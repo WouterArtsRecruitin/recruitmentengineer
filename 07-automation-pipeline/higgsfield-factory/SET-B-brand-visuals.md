@@ -1,17 +1,17 @@
-# SET B — Brand Visuals (Nano Banana Pro)
+# SET B — Brand Visuals (Nano Banana 2, no Soul-ID)
 
-8 prompts for brand-asset rendering: 3 data-viz, 1 quote-card template (with `[QUOTE]` variable), 2 carousel covers (long-form LinkedIn + short Meta), 1 lead-magnet PDF cover, 1 LinkedIn cover banner.
+8 prompts for non-portrait brand assets: 3 data viz + 1 quote-card template + 2 carousel covers (long-form-LI vs short-Meta) + 1 PDF cover + 1 LinkedIn banner.
 
-> **Tool:** Nano Banana Pro (4K for banners + PDF cover, 1K for cards). Better text-rendering than Soul 2 — use this set for any asset where typography must be sharp.
+> **Tool:** Nano Banana 2 (sharper text rendering, 4K for banners + PDF cover, 1K for cards). **No Soul-ID needed** — these assets have no portrait. The LinkedIn banner uses a Soul-portrait LINK (rendered separately via Set-A then composited), not a Soul-rendered face inside this prompt.
 
-> **Pre-flight:** read `identity-lock-rules.md`. Brand colors locked: `#FF6B1A` (orange), `#1E3A5F` (blueprint blue), `#00D4FF` (AI cyan), `#F5F0EB` (warm grey), `#1A1A1A` (deep black).
+> **Pre-flight:** read `identity-lock-rules.md`. Brand colors locked: `#FF6B1A` (orange), `#1E3A5F` (blueprint blue), `#00D4FF` (AI cyan), `#F5F0EB` (warm grey), `#1A1A1A` (deep black). Typography locked: **Inter** (display) + **JetBrains Mono** (data/labels).
 
 ---
 
-## B.1 — Data-viz: pipeline funnel (1:1, blueprint style)
+## B.1 — Data-viz: pipeline-funnel (1:1, blueprint style)
 
 ```
-Nano Banana Pro — 1K — 1:1
+Nano Banana 2 — 1K — 1:1
 
 Editorial blueprint-style data visualization for recruitment pipeline
 funnel. Background: deep blueprint blue #1E3A5F with subtle technical-
@@ -29,7 +29,7 @@ to bottom:
 Each stage rendered as a horizontal bar in warm grey #F5F0EB with a
 thin orange #FF6B1A right-edge accent. Numbers rendered in JetBrains
 Mono Bold white. Stage labels in Inter Bold white, all caps, letter-
-spaced. Conversion percentages between stages marked with small
+spaced 0.2em. Conversion percentages between stages marked with small
 orange "▼ 28%" indicators in JetBrains Mono.
 
 Top-right corner: small JetBrains Mono uppercase 12pt:
@@ -40,18 +40,22 @@ Bottom-right: small "Recruitin" wordmark white. Bottom-left: tiny
 
 Engineering blueprint aesthetic, ultra-clean, high contrast, NOT
 Powerpoint, NOT generic infographic.
+```
 
-NEGATIVE: misspelled text, decorative gradients, drop shadows,
-cartoon, generic infographic style, Powerpoint feel, AI artifacts,
-watermark, busy ornaments, multiple fonts beyond Inter + JetBrains.
+**NEGATIVE PROMPT:**
+```
+misspelled text, decorative gradients, drop shadows, cartoon, generic
+infographic style, Powerpoint feel, AI artifacts, watermark, busy
+ornaments, multiple fonts beyond Inter + JetBrains Mono, glow effects,
+3D bevels, Aebi Schmidt branding.
 ```
 
 ---
 
-## B.2 — Data-viz: throughput chart (1:1, blueprint style)
+## B.2 — Data-viz: throughput-chart (1:1, blueprint style)
 
 ```
-Nano Banana Pro — 1K — 1:1
+Nano Banana 2 — 1K — 1:1
 
 Editorial blueprint-style throughput chart. Background: deep
 blueprint blue #1E3A5F with technical grid pattern at 8% opacity.
@@ -70,28 +74,32 @@ Bottom-left: "Source: Recruitin internal dashboard / n=247 vacatures".
 Bottom-right: small Recruitin wordmark in white.
 
 Engineering documentation aesthetic, clean, factual, ZERO decoration.
+Inter Bold for labels, JetBrains Mono for all numerics.
+```
 
-NEGATIVE: misspelled text, decorative gradients, drop shadows,
-cartoon, glowing 3D bars, Powerpoint, generic infographic, watermark,
-multiple fonts.
+**NEGATIVE PROMPT:**
+```
+misspelled text, decorative gradients, drop shadows, cartoon, glowing
+3D bars, Powerpoint, generic infographic, watermark, multiple fonts,
+AI artifacts, Aebi Schmidt branding.
 ```
 
 ---
 
-## B.3 — Data-viz: before/after comparison (1:1, blueprint style)
+## B.3 — Data-viz: before-after (1:1, blueprint style)
 
 ```
-Nano Banana Pro — 1K — 1:1
+Nano Banana 2 — 1K — 1:1
 
 Editorial blueprint-style before/after comparison. Background: warm
 grey #F5F0EB (light variant for high-readability data).
 
 Layout: vertical split, two columns labeled "VOOR / NA" at top in
-Inter Bold dark blueprint-blue. Left column ("VOOR"): 4 stacked stat
-boxes in faint grey rendering bad numbers — "TIME TO HIRE: 84d",
-"CTR: 0.4%", "REPLY RATE: 6%", "COST PER HIRE: €4.200". Right column
-("NA"): same 4 stats in orange-accent boxes — "TIME TO HIRE: 38d",
-"CTR: 1.9%", "REPLY RATE: 41%", "COST PER HIRE: €1.150".
+Inter Bold dark blueprint-blue #1E3A5F. Left column ("VOOR"): 4
+stacked stat boxes in faint grey rendering bad numbers — "TIME TO
+HIRE: 84d", "CTR: 0.4%", "REPLY RATE: 6%", "COST PER HIRE: €4.200".
+Right column ("NA"): same 4 stats in orange-accent boxes — "TIME TO
+HIRE: 38d", "CTR: 1.9%", "REPLY RATE: 41%", "COST PER HIRE: €1.150".
 
 Between columns: a thin vertical orange #FF6B1A divider with the
 JetBrains Mono caption "+ AI RECRUITMENT STACK" running vertically
@@ -102,18 +110,22 @@ Bottom: small footer "Q3 2025 — Q1 2026 / Ing. W. Arts" in JetBrains
 Mono. Bottom-right: tiny Recruitin wordmark.
 
 Engineering case-study report aesthetic, clean technical document.
+Inter for labels, JetBrains Mono for numerics, NO decorative elements.
+```
 
-NEGATIVE: misspelled text, decorative, glowing arrows, cartoon,
-generic before/after weight-loss style, Powerpoint, AI artifacts,
-watermark.
+**NEGATIVE PROMPT:**
+```
+misspelled text, decorative, glowing arrows, cartoon, generic
+before/after weight-loss style, Powerpoint, AI artifacts, watermark,
+gradients, multiple fonts, Aebi Schmidt branding.
 ```
 
 ---
 
-## B.4 — Quote-card template (1:1, with `[QUOTE]` variable)
+## B.4 — Quote-card template (1:1, with [QUOTE] variable)
 
 ```
-Nano Banana Pro — 1K — 1:1
+Nano Banana 2 — 1K — 1:1
 
 Editorial quote card design template. Background: solid blueprint
 blue #1E3A5F with subtle blueprint-grid pattern at 5% opacity.
@@ -125,7 +137,8 @@ Below the quote, separated by a thin orange #FF6B1A horizontal rule
 (80px wide), small attribution in orange:
 "— Ing. W. Arts"
 
-Below attribution, in JetBrains Mono uppercase 11pt white:
+Below attribution, in JetBrains Mono uppercase 11pt white,
+letter-spaced 0.2em:
 "RECRUITIN.NL · RECRUITMENT ENGINEER"
 
 Bottom-right corner: small Recruitin wordmark in white at 60% opacity.
@@ -136,13 +149,9 @@ warm grey #F5F0EB at 50% opacity:
 
 Editorial minimal engineering aesthetic. Sharp text rendering, NO
 decorative ornaments, NO drop shadows.
-
-NEGATIVE: misspelled text, decorative ornaments, drop shadows,
-gradients, glow, cartoon, generic motivational quote design,
-multiple fonts beyond Inter + JetBrains, watermark, AI artifacts.
 ```
 
-### Variables to fill
+**Variables to fill:**
 
 | Variable | Example values |
 |----------|----------------|
@@ -151,46 +160,55 @@ multiple fonts beyond Inter + JetBrains, watermark, AI artifacts.
 
 Quote length budget: max 90 characters, max 3 lines on render. If a quote is longer, downsize to 32pt (and reflow to 4 lines max). Test legibility at thumbnail (400px).
 
+**NEGATIVE PROMPT:**
+```
+misspelled text, decorative ornaments, drop shadows, gradients, glow,
+cartoon, generic motivational quote design, multiple fonts beyond
+Inter + JetBrains Mono, watermark, AI artifacts, photo elements, faces.
+```
+
 ---
 
 ## B.5 — Carousel cover: long-form LinkedIn (4:5, photo + headline)
 
 ```
-Nano Banana Pro — 1K — 4:5
+Nano Banana 2 — 1K — 4:5
 
 LinkedIn long-form carousel cover slide.
 
-Top 60% of frame: cinematic editorial photo of Ing. W. Arts in
-industrial setting (use Set A Portrait 02 or 04 as character
-reference). Light grey wool blazer, white shirt, black knit tie,
-round-frame matte black acetate glasses, salt-and-pepper hair.
-Calm authoritative expression, examining-blueprint or pointing-at-
-screen pose. Image slightly darkened/washed for text-overlay zone.
+Top 60% of frame: cinematic editorial photo placeholder zone for a
+Soul-rendered portrait of Ing. W. Arts (composited from a Set A Soul-2
+render — A02 werkplaats or A04 monitor-setup). Image slightly
+darkened/washed for text-overlay zone. (Render this cover with a
+neutral industrial backdrop; the actual portrait is composited in
+afterward via masking.)
 
 Bottom 40%: solid orange band #FF6B1A. Inside the band, large white
-Inter Bold typography, 3 stacked lines, all caps, slightly letter-
-spaced:
+Inter Bold typography, 3 stacked lines, all caps, letter-spaced 0.02em:
   "HOE IK
    VACATURE-INTAKE HEB
    GEREVERSE-ENGINEERED"
 
-Below the headline, smaller white text:
+Below the headline, smaller white Inter Regular 18pt:
 "10 slides → Ing. W. Arts | Recruitin"
 
-Bottom-right corner: small "swipe →" indicator in white JetBrains
-Mono, pulsing-feel.
+Bottom-right corner: small "swipe →" indicator in white JetBrains Mono.
 
-Top-left corner above photo: tiny JetBrains Mono uppercase 10pt
-warm grey #F5F0EB at 70% opacity:
+Top-left corner above photo zone: tiny JetBrains Mono uppercase 10pt
+warm grey #F5F0EB at 70% opacity, letter-spaced 0.2em:
 "FIG. 01 / 10 — LINKEDIN CAROUSEL"
 
 Editorial documentary + engineering tag aesthetic. Carousel cover
 that screams "open me" — clear hierarchy, premium feel, NOT
 clickbait, NOT influencer.
+```
 
-NEGATIVE: misspelled text, generic LinkedIn carousel, plastic skin,
-missing glasses, broad smile, fake influencer face, stock photo,
-watermark, decorative ornaments.
+**NEGATIVE PROMPT:**
+```
+misspelled text, generic LinkedIn carousel template, plastic skin,
+broad smile, fake influencer face, stock photo, watermark, decorative
+ornaments, drop shadows, gradients, multiple fonts beyond Inter +
+JetBrains Mono, Aebi Schmidt branding.
 ```
 
 ---
@@ -198,63 +216,63 @@ watermark, decorative ornaments.
 ## B.6 — Carousel cover: short Meta (1:1, typography-led)
 
 ```
-Nano Banana Pro — 1K — 1:1
+Nano Banana 2 — 1K — 1:1
 
 Meta / Instagram carousel cover slide. Typography-led, no portrait.
 
 Background: pure deep black #1A1A1A with extremely faint blueprint
 grid pattern at 3% opacity.
 
-Massive top-left text in Inter Bold, all caps:
+Massive top-left text in Inter Black, all caps, letter-spaced 0.02em:
   "47 PROMPTS." (white, 90pt)
-Below in Inter Bold orange #FF6B1A, smaller:
+Below in Inter Black orange #FF6B1A, smaller:
   "23 ZIJN WAARDELOOS." (60pt)
-Below in white JetBrains Mono uppercase 14pt:
+Below in white JetBrains Mono uppercase 14pt, letter-spaced 0.2em:
   "DE 5 DIE WERKEN — SWIPE →"
 
 Bottom-right corner: small Recruitin wordmark in orange #FF6B1A.
-Bottom-left: tiny "@ingwarts" in JetBrains Mono warm grey.
+Bottom-left: tiny "@ingwarts" in JetBrains Mono warm grey #F5F0EB.
 
 Maximum contrast, manifesto-style hook design. Engineered for
 Meta feed thumbnail visibility — the numerical hook reads at 200px.
+```
 
-NEGATIVE: misspelled text, decorative ornaments, drop shadows,
-gradients, generic motivational, cartoon, AI artifacts, watermark,
-multiple fonts beyond Inter + JetBrains.
+**NEGATIVE PROMPT:**
+```
+misspelled text, decorative ornaments, drop shadows, gradients, generic
+motivational, cartoon, AI artifacts, watermark, multiple fonts beyond
+Inter + JetBrains Mono, photo elements, faces.
 ```
 
 ---
 
-## B.7 — Lead magnet PDF cover (8.5×11, "Stack 2026")
+## B.7 — PDF cover: Stack 2026 (A4, blueprint grid + Inter typography)
 
 ```
-Nano Banana Pro — 4K — A4 portrait (or 8.5×11 ratio)
+Nano Banana 2 — 4K — A4 portrait (or 8.5×11 ratio)
 
 Editorial PDF cover for "De Recruitment Engineering Stack 2026"
 (12-page lead magnet). Premium editorial feel — like an Indesign-
 quality industry report, NOT a free e-book.
 
-Top half (60%): cinematic editorial photo of Ing. W. Arts in a
-blueprint-tafel setting (use Set A Portrait 03 as reference).
-Light grey wool blazer, white shirt, black knit tie, round-frame
-matte black acetate glasses, salt-and-pepper hair. Three-quarter
-pose, leaning over engineering blueprint, focused intelligent
-gaze. Strong teal-orange cinematic grade. Image bleeds to edges
-with subtle vignette darkening at the bottom for text-overlay.
+Background: warm grey #F5F0EB with a precise blueprint grid pattern
+at 6% opacity (deep blueprint-blue #1E3A5F linework, 32px grid
+spacing, dimension markers in corners).
 
-Bottom half (40%): warm grey band #F5F0EB. Inside:
-
-Top of band, JetBrains Mono uppercase 14pt blueprint-blue:
+Top-third: large blueprint-blue #1E3A5F block (60% width, 40% height)
+positioned top-left. Inside the block, JetBrains Mono uppercase 14pt
+warm grey #F5F0EB, letter-spaced 0.2em:
 "RECRUITIN.NL · STACK 2026 · v1.0"
 
-Hoofdtitel, Inter Black 72pt blueprint-blue #1E3A5F:
+Center, dominating typography zone — Inter Black 96pt blueprint-blue
+#1E3A5F, 3 lines, left-aligned, letter-spaced -0.04em:
   "Recruitment
    Engineering
    Stack 2026"
 
-Onder hoofdtitel, dunne 6px hoge oranje rule (#FF6B1A), 120px breed.
+Below hoofdtitel, dunne 6px hoge oranje rule (#FF6B1A), 120px breed.
 
-Eronder, Inter Regular 18pt deep zwart #1A1A1A:
+Onder de rule, Inter Regular 18pt deep zwart #1A1A1A:
 "5 productie-prompts. 47 getest. 12 pagina's. Gratis."
 
 Bottom-left: kleinere text 13pt JetBrains Mono blueprint-blue:
@@ -263,46 +281,53 @@ Bottom-left: kleinere text 13pt JetBrains Mono blueprint-blue:
 Bottom-right: oranje accent-block #FF6B1A 80×30px met witte text
 "GRATIS PDF" in Inter Bold, plus pijl-icoon.
 
-Editorial industrial-report aesthetic. NOT e-book template, NOT
-generic lead-magnet, NOT motivational fluff.
+Corner technical-drawing markers (dimension arrows in JetBrains Mono
+9pt blueprint-blue at 30% opacity) for editorial-engineering vibe.
 
-NEGATIVE: misspelled text, generic e-book cover, stock photo,
-plastic skin, missing glasses, broad smile, fake AI grin,
-decorative ornaments, drop shadows, gradients, multiple fonts,
-watermark, Aebi Schmidt branding.
+Editorial industrial-report aesthetic, blueprint-grid foundation.
+NO photo elements (this is a typography-only cover).
+```
+
+**NEGATIVE PROMPT:**
+```
+misspelled text, generic e-book cover, stock photo, faces, plastic
+skin, broad smile, fake AI grin, decorative ornaments, drop shadows,
+gradients, multiple fonts beyond Inter + JetBrains Mono, watermark,
+Aebi Schmidt branding, glow effects.
 ```
 
 ---
 
-## B.8 — LinkedIn cover banner (1584×396, hero portrait + wordmark)
+## B.8 — LinkedIn banner 1584×396 (Soul-portrait link + wordmark right)
 
 ```
-Nano Banana Pro — 4K — 21:9 (crop to 1584×396 in post)
+Nano Banana 2 — 4K — 21:9 (crop to 1584×396 in post)
 
-Wide cinematic LinkedIn cover banner.
+Wide cinematic LinkedIn cover banner. Composite layout: Soul-portrait
+on left (linked from Set A render — A01 productiehal or A05 klant-
+locatie), brand typography on right.
 
-Left third (~530px wide): editorial portrait of Ing. W. Arts in
-industrial setting (use Set A Portrait 01 or 04 as reference).
-Light grey wool blazer, white shirt, black knit tie, round-frame
-matte black acetate glasses, salt-and-pepper hair. Three-quarter
-pose, calm authoritative gaze toward camera-right. Industrial
-out-of-focus background — machine park or production hall, blueprint
-blue/grey tones. Strong teal-orange cinematic grade.
+Left third (~530px wide of 1584): editorial portrait composite zone.
+The portrait itself is rendered separately in Set A (Soul-ID
+948dbc10-ba8d-406c-b771-e15610ae8674) and masked into this banner.
+For Nano Banana 2 render: leave a soft-feathered industrial backdrop
+in this zone with blueprint-blue #1E3A5F and warm grey #F5F0EB tones,
+out-of-focus machine-park silhouettes, ready for portrait composite.
 
-Center two-thirds: dark gradient overlay from blueprint-blue
-#1E3A5F at left edge fading to deep black #1A1A1A at right.
-Subtle blueprint-grid pattern at 6% opacity.
+Center two-thirds: dark gradient overlay from blueprint-blue #1E3A5F
+at left edge fading to deep black #1A1A1A at right. Subtle blueprint-
+grid pattern at 6% opacity.
 
 Right two-thirds typography zone:
 
 Top (just left of horizontal center), JetBrains Mono uppercase 16pt
-warm grey #F5F0EB at 70% opacity:
+warm grey #F5F0EB at 70% opacity, letter-spaced 0.2em:
 "RECRUITIN.NL · RECRUITMENT ENGINEERING"
 
-Hoofdregel, Inter Black 64pt white:
+Hoofdregel, Inter Black 64pt white, letter-spaced -0.03em:
   "Ing. W. Arts"
 
-Below, Inter Bold 32pt orange #FF6B1A, all caps, letter-spaced:
+Below, Inter Bold 32pt orange #FF6B1A, all caps, letter-spaced 0.02em:
 "RECRUITMENT ENGINEER"
 
 Below, dunne 4px oranje rule, 100px breed.
@@ -314,11 +339,16 @@ Bottom-right corner of banner: tiny Recruitin wordmark in orange
 #FF6B1A.
 
 Cinematic editorial banner. Sharp typography, NOT generic LinkedIn
-cover, NOT motivational, NOT AI-generated avatar.
+cover, NOT motivational, NOT AI-generated avatar inside this prompt.
+```
 
-NEGATIVE: misspelled text, generic LinkedIn cover, plastic skin,
-missing glasses, broad smile, fake influencer face, stock photo,
-watermark, decorative ornaments, drop shadows, multiple fonts.
+**NEGATIVE PROMPT:**
+```
+misspelled text, generic LinkedIn cover template, plastic skin,
+broad smile, fake influencer face, stock photo, watermark, decorative
+ornaments, drop shadows, gradients on type, multiple fonts beyond
+Inter + JetBrains Mono, Aebi Schmidt branding, fake portrait inside
+the banner (Soul-portrait composited separately, NOT generated here).
 ```
 
 ---
@@ -330,4 +360,12 @@ After approval, copy to:
 - `02-higgsfield-assets/quote-cards/setB-04-quote-{quote-slug}-{date}.png`
 - `02-higgsfield-assets/carousel-covers/setB-{05,06}-{platform}-{date}.png`
 - `03-lead-magnet/cover/setB-07-stack2026-cover-{date}.{png,pdf}`
-- `02-higgsfield-assets/banners/setB-08-linkedin-cover-{date}.png` + crop to 1584×396 in post
+- `02-higgsfield-assets/banners/setB-08-linkedin-cover-{date}.png` (composite Soul-portrait from Set A in post → crop to 1584×396)
+
+---
+
+## Why no Soul-ID in Set B
+
+Set B is for non-portrait assets. Data-viz, typography-only covers, the PDF cover, and the LinkedIn banner (where the portrait is a *composited link* to a Set-A render, not a face generated inside this prompt) — none need a face-locked Soul.
+
+If a future Set-B asset DOES need an embedded portrait inside the prompt itself, move that asset to Set A (Soul) or Set C (Marketing Studio Soul) instead. Don't try to dual-reference a face into Nano Banana 2 — Soul-2 is faster + more consistent.
