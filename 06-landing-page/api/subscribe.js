@@ -49,6 +49,14 @@ function setCors(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
 
+// Origin enforcement — CORS only blocks browser-JS reads, not the side-effects.
+// Modern browsers ALWAYS send Origin for POST fetch() — missing/forged Origin = not us.
+// Spoofable via curl, but raises the floor against naive bots and accidental embedding.
+function originAllowed(req) {
+  const origin = req.headers.origin;
+  return Boolean(origin && ALLOWED_ORIGINS.has(origin));
+}
+
 const EMAIL_HTML = `
   <div style="font-family: -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #1a1a1a;">
     <p>Hi,</p>
@@ -70,8 +78,8 @@ const EMAIL_HTML = `
     </p>
     <hr style="border: none; border-top: 1px solid #e5e0d8; margin: 32px 0;">
     <p style="font-size: 12px; color: #5a6573;">
-      Je krijgt deze mail omdat je je hebt aangemeld op recruitmentengineer.nl.<br>
-      <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color: #5a6573;">Uitschrijven</a>
+      Je krijgt deze mail omdat je je zelf hebt aangemeld op recruitmentengineer.nl.<br>
+      Wil je geen mails meer? Reply met "unsubscribe" — dan haal ik je handmatig uit de lijst.
     </p>
   </div>
 `;
@@ -81,8 +89,16 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
 
+  // Reject forged-Origin POSTs (curl / server-to-server / any non-allowlisted browser).
+  if (!originAllowed(req)) {
+    return res.status(403).json({ error: 'forbidden' });
+  }
+
+  // Vercel sets `x-real-ip` to the trusted client IP. The first segment of `x-forwarded-for`
+  // is client-controlled and trivially spoofed for rate-limit bypass — use `x-real-ip` if present.
   const ip =
-    (req.headers['x-forwarded-for'] || '').split(',')[0].trim() ||
+    req.headers['x-real-ip'] ||
+    (req.headers['x-forwarded-for'] || '').split(',').pop().trim() ||
     req.socket?.remoteAddress ||
     'unknown';
   if (rateLimited(ip)) {
@@ -95,8 +111,9 @@ export default async function handler(req, res) {
   }
   const normalizedEmail = email.trim().toLowerCase();
 
-  // Sanitize UTM-set: trim, cap length, default to empty string
-  const sanitize = (v) => (typeof v === 'string' ? v.trim().slice(0, 200) : '');
+  // Sanitize UTM-set: trim, strip control-chars (defense for Pipedrive note), cap length
+  const sanitize = (v) =>
+    typeof v === 'string' ? v.replace(/[\r\n\x00-\x1f\x7f]/g, ' ').trim().slice(0, 200) : '';
   const utm = {
     utm_source: sanitize(utm_source),
     utm_medium: sanitize(utm_medium),
@@ -167,8 +184,12 @@ export default async function handler(req, res) {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+              // NAAM_REGEL: leave first_name empty — never derive a name from the email
+              // local-part. Pipedrive Person below uses guessed name only because that
+              // field is required.
               email: normalizedEmail,
-              first_name: displayName,
+              first_name: '',
+              last_name: '',
               unsubscribed: false,
             }),
           }
