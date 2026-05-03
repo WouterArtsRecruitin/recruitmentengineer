@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ad Generator — Recruitment Engineer</title>
+<meta name="description" content="Genereer hooks, body copy, headlines, CTA's, Higgsfield + Seedance briefs en Meta Ads JSON voor recruitmentengineer.nl campagnes.">
+<meta name="robots" content="noindex,nofollow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --orange:        #FF6B1A;
+  --orange-shade:  #E55A0F;
+  --blue:          #1E3A5F;
+  --blue-deep:     #15293F;
+  --blue-pale:     #2C5582;
+  --cyan:          #00D4FF;
+  --warm-grey:     #F5F0EB;
+  --warm-grey-2:   #EAE3D9;
+  --ink:           #1A1A1A;
+  --ink-soft:      #2D2D2D;
+  --rule:          rgba(30, 58, 95, 0.18);
+  --rule-strong:   rgba(30, 58, 95, 0.5);
+  --error:         #C8302E;
+  --success:       #1F7A4D;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { background: var(--warm-grey); }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--warm-grey);
+  color: var(--ink);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.mono { font-family: 'JetBrains Mono', monospace; }
+::selection { background: var(--orange); color: var(--warm-grey); }
+
+.blueprint-bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(var(--rule) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+  background-size: 64px 64px;
+  opacity: 0.30;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+}
+
+.container { max-width: 1280px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+
+.tech-header {
+  border-bottom: 1px solid var(--blue);
+  padding: 16px 0;
+  position: sticky; top: 0; z-index: 100;
+  backdrop-filter: blur(6px);
+  background: rgba(245, 240, 235, 0.92);
+}
+.tech-header .container { display: flex; justify-content: space-between; align-items: center; }
+.tech-header .logo { display: flex; align-items: center; gap: 12px; }
+.tech-header .logo-mark {
+  width: 32px; height: 32px;
+  background: var(--blue);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.tech-header .logo-mark::after {
+  content: ""; position: absolute;
+  width: 8px; height: 8px;
+  background: var(--orange);
+  top: 4px; right: 4px;
+}
+.tech-header .logo-mark span {
+  color: var(--warm-grey);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700; font-size: 14px;
+  letter-spacing: -1px;
+}
+.tech-header .logo-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--blue); line-height: 1.3;
+}
+.tech-header .logo-text strong { display: block; font-weight: 700; font-size: 13px; }
+.tech-header .meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--blue);
+  display: flex; gap: 24px;
+}
+.tech-header .meta .dot {
+  display: inline-block; width: 8px; height: 8px;
+  background: var(--orange); vertical-align: middle; margin-right: 6px;
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%, 90% { opacity: 1; } 95% { opacity: 0.3; } }
+@media (max-width: 720px) { .tech-header .meta { display: none; } }
+
+.hero { padding: 56px 0 32px; }
+.hero .doc-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--blue);
+  margin-bottom: 24px;
+  display: flex; gap: 16px; align-items: center;
+}
+.hero .doc-id .badge {
+  background: var(--orange); color: var(--warm-grey);
+  padding: 4px 10px; font-weight: 700; letter-spacing: 1.5px;
+}
+.hero .doc-id .rule { flex: 1; height: 1px; background: var(--blue); max-width: 200px; }
+.hero h1 {
+  font-size: clamp(36px, 5.5vw, 64px); font-weight: 900;
+  line-height: 0.95; letter-spacing: -0.03em;
+  color: var(--blue); margin-bottom: 20px; max-width: 18ch;
+}
+.hero h1 .accent { color: var(--orange); }
+.hero p.standfirst {
+  font-size: clamp(15px, 1.4vw, 17px); line-height: 1.5;
+  color: var(--ink-soft); max-width: 64ch;
+}
+
+main { padding: 24px 0 80px; }
+.layout {
+  display: grid; grid-template-columns: 420px 1fr; gap: 48px;
+  align-items: start;
+}
+@media (max-width: 1100px) { .layout { grid-template-columns: 1fr; } }
+
+/* FORM CARD */
+.form-card {
+  background: var(--warm-grey);
+  border: 1px solid var(--blue);
+  position: sticky; top: 96px;
+}
+.form-card .form-head {
+  background: var(--blue); color: var(--warm-grey);
+  padding: 14px 20px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
+}
+.form-card .form-head .dot {
+  display: inline-block; width: 6px; height: 6px;
+  background: var(--orange); margin-right: 8px;
+  animation: blink 2s infinite;
+}
+.form-card form { padding: 20px; }
+.field { margin-bottom: 22px; }
+.field-label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--blue);
+  margin-bottom: 8px; font-weight: 600;
+}
+.field-label .req { color: var(--orange); }
+.field-help {
+  font-size: 11px; color: var(--ink-soft); opacity: 0.7;
+  margin-top: 4px; line-height: 1.4;
+}
+
+select, input[type="text"] {
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px; line-height: 1.4;
+  padding: 10px 12px;
+  border: 1px solid var(--blue);
+  background: var(--warm-grey);
+  color: var(--ink); border-radius: 0;
+  appearance: none; -webkit-appearance: none;
+}
+select { cursor: pointer; padding-right: 32px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'><path d='M1 1.5L6 6.5L11 1.5' stroke='%231E3A5F' stroke-width='1.5' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat; background-position: right 12px center;
+}
+select:focus, input[type="text"]:focus { outline: 2px solid var(--orange); outline-offset: 1px; }
+
+.radio-group, .checkbox-group {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.radio, .checkbox {
+  position: relative;
+}
+.radio input, .checkbox input { position: absolute; opacity: 0; pointer-events: none; }
+.radio label, .checkbox label {
+  display: inline-block; cursor: pointer;
+  font-size: 12px; font-weight: 500;
+  padding: 7px 12px;
+  border: 1px solid var(--blue);
+  background: var(--warm-grey);
+  color: var(--blue);
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.radio input:checked + label, .checkbox input:checked + label {
+  background: var(--blue); color: var(--warm-grey);
+  border-color: var(--blue);
+}
+.radio input:focus-visible + label, .checkbox input:focus-visible + label {
+  outline: 2px solid var(--orange); outline-offset: 1px;
+}
+.checkbox input:checked + label::before {
+  content: "✓ "; color: var(--orange);
+}
+
+.btn-row { display: flex; gap: 12px; margin-top: 8px; }
+.btn-primary {
+  flex: 1;
+  background: var(--orange); color: var(--warm-grey);
+  border: 1px solid var(--orange);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 2px;
+  padding: 14px 20px; cursor: pointer;
+  transition: background 0.15s ease;
+}
+.btn-primary:hover:not(:disabled) { background: var(--orange-shade); border-color: var(--orange-shade); }
+.btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn-secondary {
+  background: var(--warm-grey); color: var(--blue);
+  border: 1px solid var(--blue);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 2px;
+  padding: 14px 20px; cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-secondary:hover { background: var(--blue); color: var(--warm-grey); }
+
+/* OUTPUT PANEL */
+.output {
+  background: var(--warm-grey);
+  border: 1px solid var(--blue);
+  min-height: 480px;
+  position: relative;
+}
+.output-head {
+  background: var(--blue); color: var(--warm-grey);
+  padding: 14px 20px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
+}
+.output-head .status {
+  display: flex; gap: 8px; align-items: center;
+  color: var(--cyan);
+}
+.output-head .status .dot {
+  width: 6px; height: 6px; background: var(--cyan); display: inline-block;
+}
+.output-head .status .dot.live { background: var(--orange); animation: blink 2s infinite; }
+.output-head .status .dot.idle { background: rgba(245, 240, 235, 0.3); animation: none; }
+.output-body { padding: 24px; }
+
+.empty-state {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 80px 24px;
+  text-align: center;
+  color: var(--ink-soft); opacity: 0.6;
+}
+.empty-state .schematic {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; line-height: 1.6;
+  white-space: pre; color: var(--blue); opacity: 0.45;
+  margin-bottom: 24px;
+}
+.empty-state h3 {
+  font-size: 18px; font-weight: 700; color: var(--blue);
+  margin-bottom: 8px; letter-spacing: -0.01em;
+}
+.empty-state p { font-size: 14px; max-width: 50ch; }
+
+.loading {
+  display: flex; flex-direction: column; align-items: center; padding: 80px 24px;
+  color: var(--blue);
+}
+.loading .spinner {
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 3px solid var(--rule); border-top-color: var(--orange);
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 24px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+  color: var(--blue);
+}
+.loading .sub { font-size: 13px; color: var(--ink-soft); margin-top: 8px; opacity: 0.7; }
+
+.error-banner {
+  background: rgba(200, 48, 46, 0.08);
+  border-left: 4px solid var(--error);
+  padding: 14px 18px;
+  font-size: 13px; color: var(--error);
+  margin-bottom: 24px;
+}
+.error-banner strong { font-weight: 700; }
+
+.section {
+  margin-bottom: 32px;
+  border: 1px solid var(--rule-strong);
+}
+.section-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--warm-grey-2);
+}
+.section-head .title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+  font-weight: 700; color: var(--blue);
+}
+.section-head .title .num {
+  display: inline-block;
+  background: var(--orange); color: var(--warm-grey);
+  padding: 2px 7px; margin-right: 8px; font-size: 10px;
+}
+.section-head .copy-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+  background: transparent; color: var(--blue);
+  border: 1px solid var(--blue);
+  padding: 5px 10px; cursor: pointer;
+  transition: all 0.15s ease;
+}
+.section-head .copy-btn:hover { background: var(--blue); color: var(--warm-grey); }
+.section-head .copy-btn.copied { background: var(--success); color: var(--warm-grey); border-color: var(--success); }
+
+.section-body { padding: 16px; }
+.section-body ol, .section-body ul { padding-left: 0; list-style: none; }
+.section-body li {
+  position: relative;
+  padding: 12px 14px 12px 44px;
+  border-bottom: 1px dashed var(--rule);
+  font-size: 14px; line-height: 1.5;
+  color: var(--ink-soft);
+}
+.section-body li:last-child { border-bottom: none; }
+.section-body li::before {
+  content: counter(item);
+  counter-increment: item;
+  position: absolute; left: 12px; top: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 700; color: var(--orange);
+  background: var(--warm-grey); border: 1px solid var(--orange);
+  width: 22px; height: 22px; display: flex;
+  align-items: center; justify-content: center;
+}
+.section-body ol, .section-body ul { counter-reset: item; }
+.section-body li.body-variant { padding-left: 14px; padding-right: 14px; }
+.section-body li.body-variant::before {
+  position: static; display: inline-block; margin-right: 10px;
+  vertical-align: top;
+}
+
+.section-body pre {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; line-height: 1.5;
+  white-space: pre-wrap; word-break: break-word;
+  color: var(--ink-soft);
+}
+.section-body .brief-text {
+  font-size: 13.5px; line-height: 1.6; color: var(--ink-soft);
+  white-space: pre-wrap;
+}
+
+.meta-bar {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  padding: 14px 16px;
+  background: var(--blue); color: var(--warm-grey);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+  margin-bottom: 24px;
+}
+.meta-bar .chip { color: var(--cyan); }
+.meta-bar .chip strong { color: var(--warm-grey); margin-left: 4px; }
+
+footer.tech-footer {
+  border-top: 1px solid var(--blue);
+  padding: 24px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--blue); opacity: 0.7;
+}
+footer.tech-footer .container { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+</style>
+</head>
+<body>
+<div class="blueprint-bg" aria-hidden="true"></div>
+
+<header class="tech-header">
+  <div class="container">
+    <div class="logo">
+      <div class="logo-mark"><span>R</span></div>
+      <div class="logo-text">
+        <strong>RECRUITMENT ENGINEER</strong>
+        AD GENERATOR · v0.1
+      </div>
+    </div>
+    <div class="meta">
+      <span><span class="dot"></span>CLAUDE SONNET 4.6</span>
+      <span>NL-NL</span>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="doc-id">
+      <span class="badge">COMP-01</span>
+      <span>AD GENERATOR AGENT</span>
+      <span class="rule"></span>
+      <span>FASE 1 · AUTHORITY</span>
+    </div>
+    <h1>Van briefing tot <span class="accent">ad-set</span> in 90 seconden.</h1>
+    <p class="standfirst">
+      Vul thema, tone-mix, format en doelgroep in. Output: 5 hooks, 3 body-variants, 5 headlines, 3 CTA's,
+      Higgsfield + Seedance briefs en Meta Ads JSON. Ingenieur-aanpak op copywriting.
+    </p>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+    <div class="layout">
+
+      <!-- FORM -->
+      <section class="form-card" aria-labelledby="form-title">
+        <div class="form-head">
+          <span><span class="dot"></span>BRIEF · INPUT</span>
+          <span id="form-title">01/02</span>
+        </div>
+        <form id="ad-form" autocomplete="off">
+
+          <div class="field">
+            <label class="field-label" for="theme">Thema <span class="req">*</span></label>
+            <select id="theme" name="theme" required>
+              <option value="AI in recruitment is overhyped">AI in recruitment is overhyped</option>
+              <option value="Boolean searches die werken">Boolean searches die werken</option>
+              <option value="Het €519k case">Het €519k case</option>
+              <option value="Pipeline diagnostics als kunst">Pipeline diagnostics als kunst</option>
+              <option value="Vacature-intake reverse-engineered">Vacature-intake reverse-engineered</option>
+              <option value="Hyper-personalization in 2 min">Hyper-personalization in 2 min</option>
+              <option value="Match score > onderbuik">Match score &gt; onderbuik</option>
+              <option value="Recruitment is geen kunst, het is een proces">Recruitment is geen kunst, het is een proces</option>
+              <option value="De jukebox vs de stack">De jukebox vs de stack</option>
+              <option value="Authority via productie-data">Authority via productie-data</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Tone — dominant <span class="req">*</span></span>
+            <div class="radio-group" role="radiogroup" aria-label="Tone dominant">
+              <span class="radio"><input type="radio" id="td1" name="tone_dom" value="Rustig autoriteit" checked><label for="td1">Rustig autoriteit</label></span>
+              <span class="radio"><input type="radio" id="td2" name="tone_dom" value="Brutaal direct"><label for="td2">Brutaal direct</label></span>
+              <span class="radio"><input type="radio" id="td3" name="tone_dom" value="Specialist confronterend"><label for="td3">Specialist confronterend</label></span>
+              <span class="radio"><input type="radio" id="td4" name="tone_dom" value="Energiek bewijsdrang"><label for="td4">Energiek bewijsdrang</label></span>
+              <span class="radio"><input type="radio" id="td5" name="tone_dom" value="Engineer logisch"><label for="td5">Engineer logisch</label></span>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Tone — secundair <span class="req">*</span></span>
+            <div class="radio-group" role="radiogroup" aria-label="Tone secundair">
+              <span class="radio"><input type="radio" id="ts1" name="tone_sec" value="Rustig autoriteit"><label for="ts1">Rustig autoriteit</label></span>
+              <span class="radio"><input type="radio" id="ts2" name="tone_sec" value="Brutaal direct"><label for="ts2">Brutaal direct</label></span>
+              <span class="radio"><input type="radio" id="ts3" name="tone_sec" value="Specialist confronterend"><label for="ts3">Specialist confronterend</label></span>
+              <span class="radio"><input type="radio" id="ts4" name="tone_sec" value="Energiek bewijsdrang"><label for="ts4">Energiek bewijsdrang</label></span>
+              <span class="radio"><input type="radio" id="ts5" name="tone_sec" value="Engineer logisch" checked><label for="ts5">Engineer logisch</label></span>
+            </div>
+            <div class="field-help">60% dominant · 30% secundair · 10% andere modus</div>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Format <span class="req">*</span></span>
+            <div class="radio-group" role="radiogroup" aria-label="Format">
+              <span class="radio"><input type="radio" id="f1" name="format" value="Reel 9:16" checked><label for="f1">Reel 9:16</label></span>
+              <span class="radio"><input type="radio" id="f2" name="format" value="Feed 1:1"><label for="f2">Feed 1:1</label></span>
+              <span class="radio"><input type="radio" id="f3" name="format" value="LinkedIn 16:9"><label for="f3">LinkedIn 16:9</label></span>
+              <span class="radio"><input type="radio" id="f4" name="format" value="LinkedIn 4:5"><label for="f4">LinkedIn 4:5</label></span>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Audience tier <span class="req">*</span></span>
+            <div class="radio-group" role="radiogroup" aria-label="Audience tier">
+              <span class="radio"><input type="radio" id="a1" name="tier" value="TOFU" checked><label for="a1">TOFU</label></span>
+              <span class="radio"><input type="radio" id="a2" name="tier" value="MOFU"><label for="a2">MOFU</label></span>
+              <span class="radio"><input type="radio" id="a3" name="tier" value="BOFU"><label for="a3">BOFU</label></span>
+            </div>
+            <div class="field-help">TOFU = problem-aware · MOFU = solution-aware · BOFU = ready-to-buy</div>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Klantbewijs (optioneel)</span>
+            <div class="checkbox-group">
+              <span class="checkbox"><input type="checkbox" id="c1" name="clients" value="Veco"><label for="c1">Veco</label></span>
+              <span class="checkbox"><input type="checkbox" id="c2" name="clients" value="Beutech"><label for="c2">Beutech</label></span>
+              <span class="checkbox"><input type="checkbox" id="c3" name="clients" value="Euromaster"><label for="c3">Euromaster</label></span>
+            </div>
+            <div class="field-help">Niets aangevinkt → geen klant-mention in copy.</div>
+          </div>
+
+          <div class="btn-row">
+            <button type="submit" class="btn-primary" id="submit-btn">Genereer ad-set</button>
+            <button type="button" class="btn-secondary" id="reset-btn">Reset</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- OUTPUT -->
+      <section class="output" aria-live="polite" aria-busy="false">
+        <div class="output-head">
+          <span><span class="dot live" id="status-dot"></span>OUTPUT · STREAM</span>
+          <span id="status-text">02/02 · IDLE</span>
+        </div>
+        <div class="output-body" id="output-body">
+          <div class="empty-state">
+<div class="schematic">┌────────────────────────────────┐
+│  THEMA   ─────►  [ HOOKS x5 ]   │
+│  TONE    ─────►  [ BODY  x3 ]   │
+│  FORMAT  ─────►  [ HEAD  x5 ]   │
+│  TIER    ─────►  [ CTA   x3 ]   │
+│  PROOF   ─────►  [ HF · SD · M] │
+└────────────────────────────────┘</div>
+            <h3>Wachten op briefing</h3>
+            <p>Vul het formulier links in en druk op <strong>Genereer ad-set</strong>. Output verschijnt hier.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<footer class="tech-footer">
+  <div class="container">
+    <span>RECRUITMENT ENGINEER · AD GENERATOR · COMP-01</span>
+    <span>RECRUITIN B.V. · INTERN GEBRUIK</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  const form = document.getElementById('ad-form');
+  const submitBtn = document.getElementById('submit-btn');
+  const resetBtn = document.getElementById('reset-btn');
+  const outputBody = document.getElementById('output-body');
+  const statusText = document.getElementById('status-text');
+  const statusDot = document.getElementById('status-dot');
+
+  function setStatus(label, mode) {
+    statusText.textContent = label;
+    statusDot.classList.remove('live', 'idle');
+    if (mode === 'live') statusDot.classList.add('live');
+    else if (mode === 'idle') statusDot.classList.add('idle');
+  }
+
+  function escapeHtml(str) {
+    if (str == null) return '';
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function readForm() {
+    const fd = new FormData(form);
+    const clients = fd.getAll('clients');
+    return {
+      theme: fd.get('theme'),
+      tone_dominant: fd.get('tone_dom'),
+      tone_secondary: fd.get('tone_sec'),
+      format: fd.get('format'),
+      tier: fd.get('tier'),
+      clients: clients
+    };
+  }
+
+  function renderLoading() {
+    outputBody.innerHTML = `
+      <div class="loading">
+        <div class="spinner"></div>
+        <div class="label">CLAUDE · GENERATING</div>
+        <div class="sub">Sonnet 4.6 schrijft 5 hooks + 3 body-variants + 5 headlines + 3 CTA's + briefs + Meta JSON…</div>
+      </div>`;
+  }
+
+  function renderError(msg, detail) {
+    outputBody.innerHTML = `
+      <div class="error-banner">
+        <strong>Fout bij genereren:</strong> ${escapeHtml(msg)}
+        ${detail ? `<div style="margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:11px;opacity:0.85;">${escapeHtml(detail)}</div>` : ''}
+      </div>
+      <div class="empty-state" style="padding:32px 8px;">
+        <h3>Probeer opnieuw</h3>
+        <p>Check dat <code>ANTHROPIC_API_KEY</code> in Vercel staat en dat de serverless function deployt is op <code>/api/generate-ad</code>.</p>
+      </div>`;
+  }
+
+  function copySectionHandler(btn, getText) {
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(getText());
+        btn.classList.add('copied');
+        const orig = btn.textContent;
+        btn.textContent = 'Copied ✓';
+        setTimeout(() => { btn.classList.remove('copied'); btn.textContent = orig; }, 1500);
+      } catch (e) {
+        btn.textContent = 'Copy failed';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+      }
+    });
+  }
+
+  function renderResult(data, brief) {
+    const hooks = Array.isArray(data.hooks) ? data.hooks : [];
+    const bodies = Array.isArray(data.bodies) ? data.bodies : [];
+    const headlines = Array.isArray(data.headlines) ? data.headlines : [];
+    const ctas = Array.isArray(data.ctas) ? data.ctas : [];
+    const hf = data.higgsfield_brief || '';
+    const sd = data.seedance_brief || '';
+    const meta = data.meta_json || {};
+
+    const clientsLabel = (brief.clients && brief.clients.length) ? brief.clients.join(' · ') : 'geen';
+
+    outputBody.innerHTML = `
+      <div class="meta-bar">
+        <span class="chip">THEMA<strong>${escapeHtml(brief.theme)}</strong></span>
+        <span class="chip">TONE<strong>${escapeHtml(brief.tone_dominant)} · ${escapeHtml(brief.tone_secondary)}</strong></span>
+        <span class="chip">FORMAT<strong>${escapeHtml(brief.format)}</strong></span>
+        <span class="chip">TIER<strong>${escapeHtml(brief.tier)}</strong></span>
+        <span class="chip">PROOF<strong>${escapeHtml(clientsLabel)}</strong></span>
+      </div>
+
+      <div class="section" data-sec="hooks">
+        <div class="section-head">
+          <span class="title"><span class="num">01</span>HOOKS · ${hooks.length}/5</span>
+          <button type="button" class="copy-btn" data-copy="hooks">Copy</button>
+        </div>
+        <div class="section-body">
+          <ol>${hooks.map(h => `<li>${escapeHtml(h)}</li>`).join('')}</ol>
+        </div>
+      </div>
+
+      <div class="section" data-sec="bodies">
+        <div class="section-head">
+          <span class="title"><span class="num">02</span>BODY COPY · ${bodies.length}/3</span>
+          <button type="button" class="copy-btn" data-copy="bodies">Copy</button>
+        </div>
+        <div class="section-body">
+          <ol>${bodies.map(b => `<li class="body-variant"><pre style="margin:0;font-family:Inter,sans-serif;white-space:pre-wrap;font-size:14px;line-height:1.55;">${escapeHtml(b)}</pre></li>`).join('')}</ol>
+        </div>
+      </div>
+
+      <div class="section" data-sec="headlines">
+        <div class="section-head">
+          <span class="title"><span class="num">03</span>HEADLINES · ${headlines.length}/5 · max 40c</span>
+          <button type="button" class="copy-btn" data-copy="headlines">Copy</button>
+        </div>
+        <div class="section-body">
+          <ol>${headlines.map(h => `<li>${escapeHtml(h)} <span class="mono" style="float:right;font-size:11px;color:var(--blue);opacity:0.6;">${(h||'').length}c</span></li>`).join('')}</ol>
+        </div>
+      </div>
+
+      <div class="section" data-sec="ctas">
+        <div class="section-head">
+          <span class="title"><span class="num">04</span>CTA · ${ctas.length}/3</span>
+          <button type="button" class="copy-btn" data-copy="ctas">Copy</button>
+        </div>
+        <div class="section-body">
+          <ol>${ctas.map(c => `<li>${escapeHtml(c)}</li>`).join('')}</ol>
+        </div>
+      </div>
+
+      <div class="section" data-sec="hf">
+        <div class="section-head">
+          <span class="title"><span class="num">05</span>HIGGSFIELD VISUAL BRIEF</span>
+          <button type="button" class="copy-btn" data-copy="hf">Copy</button>
+        </div>
+        <div class="section-body">
+          <div class="brief-text">${escapeHtml(hf)}</div>
+        </div>
+      </div>
+
+      <div class="section" data-sec="sd">
+        <div class="section-head">
+          <span class="title"><span class="num">06</span>SEEDANCE MOTION BRIEF · 5–8s</span>
+          <button type="button" class="copy-btn" data-copy="sd">Copy</button>
+        </div>
+        <div class="section-body">
+          <div class="brief-text">${escapeHtml(sd)}</div>
+        </div>
+      </div>
+
+      <div class="section" data-sec="meta">
+        <div class="section-head">
+          <span class="title"><span class="num">07</span>META ADS JSON</span>
+          <button type="button" class="copy-btn" data-copy="meta">Copy</button>
+        </div>
+        <div class="section-body">
+          <pre>${escapeHtml(JSON.stringify(meta, null, 2))}</pre>
+        </div>
+      </div>
+    `;
+
+    // Wire copy buttons
+    outputBody.querySelectorAll('.copy-btn').forEach(btn => {
+      const sec = btn.getAttribute('data-copy');
+      copySectionHandler(btn, () => {
+        if (sec === 'hooks') return hooks.map((h,i)=>`${i+1}. ${h}`).join('\n');
+        if (sec === 'bodies') return bodies.map((b,i)=>`--- VARIANT ${i+1} ---\n${b}`).join('\n\n');
+        if (sec === 'headlines') return headlines.map((h,i)=>`${i+1}. ${h} (${(h||'').length}c)`).join('\n');
+        if (sec === 'ctas') return ctas.map((c,i)=>`${i+1}. ${c}`).join('\n');
+        if (sec === 'hf') return hf;
+        if (sec === 'sd') return sd;
+        if (sec === 'meta') return JSON.stringify(meta, null, 2);
+        return '';
+      });
+    });
+  }
+
+  resetBtn.addEventListener('click', () => {
+    form.reset();
+    outputBody.innerHTML = `
+      <div class="empty-state">
+        <h3>Reset · klaar voor nieuwe briefing</h3>
+        <p>Vul het formulier in en druk op <strong>Genereer ad-set</strong>.</p>
+      </div>`;
+    setStatus('02/02 · IDLE', 'idle');
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const brief = readForm();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Genereren…';
+    setStatus('02/02 · STREAMING', 'live');
+    renderLoading();
+
+    try {
+      const res = await fetch('/api/generate-ad', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(brief)
+      });
+      const ct = res.headers.get('content-type') || '';
+      let payload;
+      if (ct.includes('application/json')) {
+        payload = await res.json();
+      } else {
+        const txt = await res.text();
+        throw new Error(`Non-JSON response (${res.status}): ${txt.slice(0,200)}`);
+      }
+      if (!res.ok) {
+        throw new Error(payload.error || `HTTP ${res.status}`);
+      }
+      renderResult(payload, brief);
+      setStatus('02/02 · DELIVERED', 'live');
+    } catch (err) {
+      console.error('Generate failed:', err);
+      renderError(err.message || 'Onbekende fout', err.stack ? err.stack.split('\n')[0] : null);
+      setStatus('02/02 · ERROR', 'idle');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Genereer ad-set';
+    }
+  });
+})();
+</script>
+</body>
+</html>

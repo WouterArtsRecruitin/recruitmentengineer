@@ -1,0 +1,69 @@
+# Auto-Poster — GitHub Actions cron
+#
+# Drop this file at `.github/workflows/auto-poster.yml` in the
+# recruitmentengineer.nl repo (or any repo with the secrets configured).
+#
+# Triggers:
+#   - cron: every 15 minutes
+#   - manual: workflow_dispatch (with optional dry_run input)
+#
+# Secrets required (Settings → Secrets and variables → Actions):
+#   NOTION_TOKEN              — internal integration token (starts with `secret_` or `ntn_`)
+#   NOTION_DB_ID              — 32-char DB id from the Notion DB share-URL
+#   LINKEDIN_ACCESS_TOKEN     — OAuth2 access_token, w_member_social scope
+#   LINKEDIN_AUTHOR_URN       — `urn:li:person:{id}` or `urn:li:organization:{id}`
+#   META_PAGE_TOKEN           — long-lived FB Page access token (60d)
+#   META_PAGE_ID              — numeric FB/IG Page ID
+#
+# See `secrets-checklist.md` for how to obtain each.
+
+name: Auto-Poster
+
+on:
+  schedule:
+    # Every 15 minutes. UTC. NL summer time = UTC+2.
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "If 'true', script logs what it would post but does NOT call LinkedIn / Meta APIs nor update Notion."
+        required: false
+        default: "false"
+        type: string
+
+# Avoid concurrent runs stomping each other.
+concurrency:
+  group: auto-poster
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install "notion-client>=2.2.1" "requests>=2.32.0"
+
+      - name: Run auto-poster
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_AUTHOR_URN: ${{ secrets.LINKEDIN_AUTHOR_URN }}
+          META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+          META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+          LANDING_URL: "https://recruitmentengineer.nl"
+        run: python scripts/auto_poster.py

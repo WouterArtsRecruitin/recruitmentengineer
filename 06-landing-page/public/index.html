@@ -4,10 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Recruitment Engineering Stack 2026 — Ing. W. Arts</title>
-<meta name="description" content="Hoe ik AI gebruik om 47% sneller technische kandidaten te vinden. 5 productie-prompts. Gratis PDF. Door Wouter Arts, Recruitment Engineer.">
+<meta name="description" content="Een ingenieursaanpak op recruitment. 5 productie-prompts uit het werk bij Veco, Beutech en Euromaster. Door Ing. W. Arts.">
+
 <meta property="og:title" content="Recruitment Engineering Stack 2026">
-<meta property="og:description" content="5 AI-prompts die 80% van het recruitment-werk automatiseren. Gratis PDF.">
-<meta property="og:type" content="website">
+<meta property="og:description" content="Een ingenieursaanpak op recruitment. 5 productie-prompts. €519k pipeline recovery case.">
+<meta property="og:type" content="article">
 <meta property="og:url" content="https://recruitmentengineer.nl">
 <meta property="og:image" content="https://recruitmentengineer.nl/og-image.jpg">
 <meta property="og:image:width" content="1200">
@@ -15,559 +16,1005 @@
 <meta property="og:locale" content="nl_NL">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Recruitment Engineering Stack 2026">
-<meta name="twitter:description" content="5 AI-prompts. 47% sneller technische kandidaten. Gratis PDF.">
+<meta name="twitter:description" content="Een ingenieursaanpak op recruitment. 5 productie-prompts.">
 <meta name="twitter:image" content="https://recruitmentengineer.nl/og-image.jpg">
+
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<link rel="alternate icon" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/favicon.svg">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
 <style>
 :root {
-  --orange: #FF6B1A;
-  --blue: #1E3A5F;
-  --cyan: #00D4FF;
-  --warm-grey: #F5F0EB;
-  --dark: #0A1929;
-  --text: #1a1a1a;
-  --muted: #5a6573;
-  --border: #e5e0d8;
+  --orange:        #FF6B1A;
+  --orange-shade:  #E55A0F;
+  --blue:          #1E3A5F;
+  --blue-deep:     #15293F;
+  --blue-pale:     #2C5582;
+  --cyan:          #00D4FF;
+  --cyan-mute:     #4DBFD9;
+  --warm-grey:     #F5F0EB;
+  --warm-grey-2:   #EAE3D9;
+  --ink:           #1A1A1A;
+  --ink-soft:      #2D2D2D;
+  --rule:          rgba(30, 58, 95, 0.18);
+  --rule-strong:   rgba(30, 58, 95, 0.5);
+  --grid: 8px;
 }
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; background: var(--warm-grey); }
 body {
   font-family: 'Inter', -apple-system, sans-serif;
   background: var(--warm-grey);
-  color: var(--text);
-  line-height: 1.6;
+  color: var(--ink);
+  line-height: 1.55;
+  font-feature-settings: "ss01", "cv11";
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
-.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
-.mono { font-family: 'JetBrains Mono', monospace; }
+.mono { font-family: 'JetBrains Mono', monospace; font-feature-settings: "ss01"; }
+::selection { background: var(--orange); color: var(--warm-grey); }
 
-/* NAV */
-nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(245, 240, 235, 0.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border);
+.blueprint-bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(var(--rule) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+  background-size: 64px 64px;
+  opacity: 0.35;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+}
+
+.container { max-width: 1280px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+
+.tech-header {
+  border-bottom: 1px solid var(--blue);
   padding: 16px 0;
+  position: sticky; top: 0; z-index: 100;
+  backdrop-filter: blur(6px);
+  background: rgba(245, 240, 235, 0.92);
 }
-nav .container { display: flex; justify-content: space-between; align-items: center; }
-nav .logo { font-weight: 800; font-size: 18px; color: var(--blue); }
-nav .logo span { color: var(--orange); }
-nav .cta-mini {
-  background: var(--blue); color: white;
-  padding: 10px 20px; border-radius: 6px;
-  text-decoration: none; font-weight: 600; font-size: 14px;
-  transition: transform 0.2s;
-}
-nav .cta-mini:hover { transform: translateY(-1px); }
-
-/* HERO */
-.hero {
-  padding: 80px 0 60px;
-  background: linear-gradient(135deg, var(--warm-grey) 0%, #ffffff 100%);
-  position: relative; overflow: hidden;
-}
-.hero::before {
-  content: ''; position: absolute; top: -100px; right: -100px;
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(255, 107, 26, 0.08) 0%, transparent 70%);
-  pointer-events: none;
-}
-.hero .label {
-  display: inline-block;
-  background: var(--blue); color: var(--cyan);
-  padding: 6px 14px; border-radius: 4px;
-  font-family: 'JetBrains Mono', monospace; font-size: 12px;
-  margin-bottom: 24px; letter-spacing: 0.5px;
-}
-.hero h1 {
-  font-size: clamp(36px, 6vw, 64px);
-  font-weight: 900;
-  line-height: 1.05;
-  color: var(--blue);
-  margin-bottom: 24px;
-  letter-spacing: -0.02em;
-}
-.hero h1 .highlight { color: var(--orange); }
-.hero .sub {
-  font-size: clamp(18px, 2.2vw, 22px);
-  color: var(--muted);
-  max-width: 720px;
-  margin-bottom: 40px;
-}
-.hero .author {
-  display: flex; align-items: center; gap: 16px;
-  margin-bottom: 48px;
-  padding: 16px 20px;
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  max-width: 480px;
-}
-.hero .author-img {
-  width: 56px; height: 56px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--orange), var(--blue));
-  display: flex; align-items: center; justify-content: center;
-  color: white; font-weight: 800; font-size: 20px;
-  flex-shrink: 0;
-}
-.hero .author-info { font-size: 14px; }
-.hero .author-info strong { display: block; font-size: 16px; color: var(--blue); }
-.hero .author-info span { color: var(--muted); }
-
-/* CTA FORM */
-.cta-form {
-  background: white;
-  padding: 32px;
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(30, 58, 95, 0.08);
-  border: 1px solid var(--border);
-  max-width: 560px;
-}
-.cta-form h3 {
-  font-size: 24px; font-weight: 800;
-  color: var(--blue); margin-bottom: 8px;
-}
-.cta-form p { color: var(--muted); margin-bottom: 20px; font-size: 15px; }
-.cta-form form { display: flex; gap: 8px; flex-wrap: wrap; }
-.cta-form input {
-  flex: 1; min-width: 240px;
-  padding: 14px 16px;
-  border: 2px solid var(--border);
-  border-radius: 8px;
-  font-size: 16px;
-  font-family: inherit;
-  transition: border-color 0.2s;
-}
-.cta-form input:focus { outline: none; border-color: var(--orange); }
-.cta-form button {
-  background: var(--orange); color: white;
-  border: none; padding: 14px 28px;
-  border-radius: 8px; font-weight: 700; font-size: 16px;
-  cursor: pointer; transition: all 0.2s;
-  font-family: inherit;
-}
-.cta-form button:hover { background: #e55a0d; transform: translateY(-2px); }
-.cta-form button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-.cta-form .privacy { font-size: 12px; color: var(--muted); margin-top: 12px; }
-.cta-form .success {
-  background: #d4f4dd; color: #0a5d2e;
-  padding: 16px; border-radius: 8px;
-  display: none;
-}
-.cta-form .success.show { display: block; }
-.cta-form .error {
-  background: #fde2e2; color: #8b1a1a;
-  padding: 12px; border-radius: 8px;
-  margin-top: 12px; font-size: 14px;
-  display: none;
-}
-.cta-form .error.show { display: block; }
-
-/* TRUST */
-.trust {
-  padding: 40px 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  background: white;
-}
-.trust .label {
-  text-align: center;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px; color: var(--muted);
-  letter-spacing: 1.5px; text-transform: uppercase;
-  margin-bottom: 24px;
-}
-.trust .logos {
-  display: flex; justify-content: center; align-items: center;
-  gap: 60px; flex-wrap: wrap;
-}
-.trust .logo-item {
-  font-weight: 800; font-size: 22px;
-  color: var(--blue); opacity: 0.7;
-  letter-spacing: 0.5px;
-}
-
-/* STACK */
-.stack {
-  padding: 100px 0 80px;
-}
-.stack h2 {
-  font-size: clamp(32px, 4.5vw, 48px);
-  font-weight: 900; color: var(--blue);
-  margin-bottom: 16px; letter-spacing: -0.02em;
-}
-.stack .intro { font-size: 18px; color: var(--muted); max-width: 720px; margin-bottom: 60px; }
-.stack-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-}
-.stack-card {
-  background: white;
-  padding: 28px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  position: relative;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.stack-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(30, 58, 95, 0.12);
-}
-.stack-card .num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px; color: var(--orange);
-  font-weight: 700; margin-bottom: 8px;
-}
-.stack-card h3 {
-  font-size: 22px; font-weight: 800;
-  color: var(--blue); margin-bottom: 12px;
-  line-height: 1.2;
-}
-.stack-card .desc { color: var(--muted); font-size: 15px; margin-bottom: 16px; }
-.stack-card .metric {
-  display: inline-block;
-  background: var(--warm-grey);
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px; font-weight: 600;
-  color: var(--blue);
-}
-
-/* CASE */
-.case {
-  padding: 80px 0;
+.tech-header .container { display: flex; justify-content: space-between; align-items: center; }
+.tech-header .logo { display: flex; align-items: center; gap: 12px; }
+.tech-header .logo-mark {
+  width: 32px; height: 32px;
   background: var(--blue);
-  color: white;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
 }
-.case .label {
+.tech-header .logo-mark::after {
+  content: ""; position: absolute;
+  width: 8px; height: 8px;
+  background: var(--orange);
+  top: 4px; right: 4px;
+}
+.tech-header .logo-mark span {
+  color: var(--warm-grey);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700; font-size: 14px;
+  letter-spacing: -1px;
+}
+.tech-header .logo-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--blue); line-height: 1.3;
+}
+.tech-header .logo-text strong { display: block; font-weight: 700; font-size: 13px; }
+.tech-header .meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--blue);
+  display: flex; gap: 24px;
+}
+.tech-header .meta .dot {
+  display: inline-block; width: 8px; height: 8px;
+  background: var(--orange); vertical-align: middle; margin-right: 6px;
+}
+@media (max-width: 720px) { .tech-header .meta { display: none; } }
+
+.hero { padding: 80px 0 100px; position: relative; border-bottom: 1px solid var(--blue); }
+.hero .doc-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--blue);
+  margin-bottom: 32px;
+  display: flex; gap: 16px; align-items: center;
+}
+.hero .doc-id .badge {
+  background: var(--orange); color: var(--warm-grey);
+  padding: 4px 10px; font-weight: 700; letter-spacing: 1.5px;
+}
+.hero .doc-id .rule { flex: 1; height: 1px; background: var(--blue); max-width: 200px; }
+.hero h1 {
+  font-size: clamp(48px, 8vw, 104px); font-weight: 900;
+  line-height: 0.9; letter-spacing: -0.04em;
+  color: var(--blue); margin-bottom: 32px; max-width: 14ch;
+}
+.hero h1 .accent { color: var(--orange); position: relative; }
+.hero h1 .accent::after {
+  content: ""; position: absolute;
+  left: 0; bottom: 4px;
+  width: 100%; height: 8px;
+  background: var(--cyan); opacity: 0.4; z-index: -1;
+}
+.hero .standfirst {
+  font-size: clamp(18px, 2vw, 22px); line-height: 1.5;
+  font-weight: 400; color: var(--ink-soft);
+  max-width: 56ch; margin-bottom: 56px;
+}
+.hero .standfirst strong { font-weight: 600; color: var(--blue); }
+.hero .byline {
+  display: flex; border: 1px solid var(--blue);
+  max-width: 580px; background: var(--warm-grey);
+}
+.hero .byline-block { padding: 16px 24px; border-right: 1px solid var(--blue); }
+.hero .byline-block:last-child { border-right: none; }
+.hero .byline-block .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--blue);
+  opacity: 0.7; margin-bottom: 4px;
+}
+.hero .byline-block .value { font-size: 14px; font-weight: 600; color: var(--ink); }
+
+.specs-bar { background: var(--blue); color: var(--warm-grey); position: relative; overflow: hidden; }
+.specs-bar::before {
+  content: ""; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px; pointer-events: none;
+}
+.specs-bar .container { padding: 0; max-width: none; }
+.specs-bar .specs-header {
+  border-bottom: 1px solid rgba(245, 240, 235, 0.15);
+  padding: 16px 32px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--cyan); position: relative;
+}
+.specs-bar .specs-header .dot {
+  display: inline-block; width: 6px; height: 6px;
+  background: var(--orange); margin-right: 8px;
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%, 90% { opacity: 1; } 95% { opacity: 0.3; } }
+.specs-grid { display: grid; grid-template-columns: repeat(4, 1fr); position: relative; }
+@media (max-width: 768px) { .specs-grid { grid-template-columns: repeat(2, 1fr); } }
+.specs-grid .spec {
+  padding: 40px 32px;
+  border-right: 1px solid rgba(245, 240, 235, 0.15);
+  position: relative;
+}
+.specs-grid .spec:last-child { border-right: none; }
+@media (max-width: 768px) {
+  .specs-grid .spec:nth-child(2n) { border-right: none; }
+  .specs-grid .spec:nth-child(-n+2) { border-bottom: 1px solid rgba(245, 240, 235, 0.15); }
+}
+.specs-grid .spec .corner {
+  position: absolute; top: 12px; right: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; color: var(--cyan);
+  opacity: 0.5; letter-spacing: 1px;
+}
+.specs-grid .spec .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--cyan); margin-bottom: 16px;
+}
+.specs-grid .spec .figure {
+  font-size: clamp(40px, 5vw, 56px); font-weight: 800;
+  line-height: 0.95; color: var(--warm-grey);
+  margin-bottom: 12px; letter-spacing: -0.03em;
+}
+.specs-grid .spec .figure .small {
+  font-size: 0.55em; font-weight: 600;
+  color: var(--orange); margin: 0 4px;
+}
+.specs-grid .spec .figure .pct { color: var(--orange); margin-left: 2px; }
+.specs-grid .spec .caption {
+  font-size: 13px; line-height: 1.4;
+  color: rgba(245, 240, 235, 0.6);
+}
+
+.intro { padding: 100px 0; position: relative; }
+.intro .annotation {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--orange);
+  margin-bottom: 24px; padding-top: 8px;
+  border-top: 2px solid var(--orange); display: inline-block;
+}
+.intro h2 {
+  font-size: clamp(36px, 5vw, 56px); font-weight: 800;
+  line-height: 1.05; letter-spacing: -0.03em;
+  color: var(--blue); margin-bottom: 48px; max-width: 22ch;
+}
+.intro h2 .underline {
+  background: linear-gradient(180deg, transparent 60%, var(--cyan) 60%, var(--cyan) 90%, transparent 90%);
+}
+.intro .body-grid { display: grid; grid-template-columns: 1fr 2.4fr; gap: 80px; max-width: 1080px; }
+@media (max-width: 900px) { .intro .body-grid { grid-template-columns: 1fr; gap: 32px; } }
+.intro .marker-col {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--blue);
+  border-top: 1px solid var(--blue); padding-top: 16px;
+  position: sticky; top: 100px; align-self: start;
+}
+.intro .marker-col .key { opacity: 0.6; margin-bottom: 4px; }
+.intro .marker-col .value {
+  font-size: 18px; font-weight: 700;
+  text-transform: none; letter-spacing: -0.01em;
+  color: var(--blue); margin-bottom: 24px;
+  font-family: 'Inter', sans-serif;
+}
+.intro .body-col p {
+  font-size: 18px; line-height: 1.65; margin-bottom: 24px;
+  color: var(--ink-soft); font-weight: 400; max-width: 60ch;
+}
+.intro .body-col p strong { font-weight: 700; color: var(--blue); }
+.intro .pullquote {
+  font-size: clamp(24px, 3vw, 32px); font-weight: 700;
+  line-height: 1.25; color: var(--blue);
+  border-left: 4px solid var(--orange);
+  padding: 16px 0 16px 32px; margin: 48px 0;
+  letter-spacing: -0.02em; max-width: 28ch;
+}
+.intro .pullquote em {
+  font-style: normal; color: var(--orange);
+  background: linear-gradient(180deg, transparent 60%, rgba(0, 212, 255, 0.3) 60%);
+}
+
+.stack { background: var(--blue); color: var(--warm-grey); padding: 100px 0; position: relative; overflow: hidden; }
+.stack::before {
+  content: ""; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px; pointer-events: none;
+}
+.stack::after {
+  content: ""; position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 80%; max-width: 800px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--orange), transparent);
+}
+.stack .section-head {
+  margin-bottom: 80px; position: relative;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 48px; align-items: end;
+}
+@media (max-width: 768px) { .stack .section-head { grid-template-columns: 1fr; gap: 24px; } }
+.stack .section-head .annotation {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--cyan);
+  margin-bottom: 16px; padding-top: 8px;
+  border-top: 2px solid var(--cyan); display: inline-block;
+}
+.stack .section-head h2 {
+  font-size: clamp(40px, 5.5vw, 72px); font-weight: 900;
+  line-height: 0.95; letter-spacing: -0.03em;
+  color: var(--warm-grey); margin-bottom: 0;
+}
+.stack .section-head h2 .accent { color: var(--orange); }
+.stack .section-head .description {
+  font-size: 18px; line-height: 1.55;
+  color: rgba(245, 240, 235, 0.7);
+  font-weight: 400; max-width: 44ch;
+}
+.modules-schematic {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border: 1px solid rgba(245, 240, 235, 0.2);
+  position: relative;
+}
+@media (max-width: 900px) { .modules-schematic { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .modules-schematic { grid-template-columns: 1fr; } }
+.module {
+  padding: 48px 32px 40px;
+  border-right: 1px solid rgba(245, 240, 235, 0.2);
+  border-bottom: 1px solid rgba(245, 240, 235, 0.2);
+  position: relative; transition: background 0.3s ease;
+  background: var(--blue-deep);
+}
+.module:hover { background: var(--blue-pale); }
+.module:hover .module-id .num { color: var(--cyan); }
+.module:nth-child(3n) { border-right: none; }
+@media (max-width: 900px) {
+  .module:nth-child(3n) { border-right: 1px solid rgba(245, 240, 235, 0.2); }
+  .module:nth-child(2n) { border-right: none; }
+}
+@media (max-width: 600px) { .module { border-right: none !important; } }
+.module .module-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 1.5px; margin-bottom: 24px;
+  display: flex; align-items: center; gap: 12px;
+}
+.module .module-id .num { color: var(--orange); font-weight: 700; transition: color 0.3s; }
+.module .module-id .name { color: rgba(245, 240, 235, 0.5); }
+.module h3 {
+  font-size: 26px; font-weight: 800; line-height: 1.1;
+  color: var(--warm-grey); margin-bottom: 16px;
+  letter-spacing: -0.01em;
+}
+.module .description {
+  font-size: 15px; line-height: 1.55;
+  color: rgba(245, 240, 235, 0.7);
+  margin-bottom: 32px; font-weight: 400;
+}
+.module .metric-block {
+  border-top: 1px solid rgba(0, 212, 255, 0.3);
+  padding-top: 16px;
+  display: flex; justify-content: space-between; align-items: baseline;
+}
+.module .metric-block .lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: 1.5px; color: rgba(245, 240, 235, 0.5);
+}
+.module .metric-block .val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; font-weight: 700; color: var(--cyan);
+}
+.module.bonus { background: var(--orange); color: var(--warm-grey); }
+.module.bonus:hover { background: var(--orange-shade); }
+.module.bonus .module-id .num { color: var(--blue); }
+.module.bonus .module-id .name { color: rgba(30, 58, 95, 0.6); }
+.module.bonus h3 { color: var(--blue); }
+.module.bonus .description { color: rgba(30, 58, 95, 0.85); }
+.module.bonus .metric-block { border-color: rgba(30, 58, 95, 0.3); }
+.module.bonus .metric-block .lbl { color: rgba(30, 58, 95, 0.7); }
+.module.bonus .metric-block .val { color: var(--blue); }
+
+.case-study { padding: 100px 0; background: var(--warm-grey); border-bottom: 1px solid var(--blue); position: relative; }
+.case-study::before {
+  content: ""; position: absolute;
+  top: 0; left: 0; right: 0; height: 8px;
+  background: repeating-linear-gradient(
+    90deg, var(--orange) 0, var(--orange) 8px,
+    var(--blue) 8px, var(--blue) 16px
+  );
+}
+.case-study .case-meta {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--blue); margin-bottom: 48px;
+}
+@media (max-width: 720px) { .case-study .case-meta { grid-template-columns: repeat(2, 1fr); } }
+.case-study .case-meta .item { padding: 14px 20px; border-right: 1px solid var(--blue); }
+.case-study .case-meta .item:last-child { border-right: none; }
+@media (max-width: 720px) {
+  .case-study .case-meta .item:nth-child(2n) { border-right: none; }
+  .case-study .case-meta .item:nth-child(-n+2) { border-bottom: 1px solid var(--blue); }
+}
+.case-study .case-meta .item .key {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--blue);
+  opacity: 0.6; margin-bottom: 4px;
+}
+.case-study .case-meta .item .val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; font-weight: 700; color: var(--blue);
+}
+.case-study h2 {
+  font-size: clamp(40px, 6vw, 80px); font-weight: 900;
+  line-height: 0.95; letter-spacing: -0.04em;
+  color: var(--blue); margin-bottom: 32px; max-width: 18ch;
+}
+.case-study h2 .number { color: var(--orange); font-variant-numeric: tabular-nums; }
+.case-study .lede {
+  font-size: 19px; line-height: 1.55;
+  color: var(--ink-soft); max-width: 60ch;
+  margin-bottom: 64px; font-weight: 400;
+}
+.case-study .lede strong { color: var(--blue); font-weight: 600; }
+.case-study .results-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--blue); background: var(--warm-grey);
+}
+@media (max-width: 720px) { .case-study .results-grid { grid-template-columns: repeat(2, 1fr); } }
+.case-study .result { padding: 32px; border-right: 1px solid var(--blue); position: relative; }
+.case-study .result:last-child { border-right: none; }
+@media (max-width: 720px) {
+  .case-study .result:nth-child(2n) { border-right: none; }
+  .case-study .result:nth-child(-n+2) { border-bottom: 1px solid var(--blue); }
+}
+.case-study .result .corner-label {
+  position: absolute; top: 8px; right: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; color: var(--orange); letter-spacing: 1.5px;
+}
+.case-study .result .figure {
+  font-size: 56px; font-weight: 900;
+  line-height: 1; color: var(--blue);
+  letter-spacing: -0.04em; margin-bottom: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.case-study .result .figure .pct { color: var(--orange); }
+.case-study .result .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--blue);
+}
+
+.author { padding: 100px 0; background: var(--warm-grey-2); border-bottom: 1px solid var(--blue); }
+.author .author-grid { display: grid; grid-template-columns: 1fr 1.8fr; gap: 80px; align-items: start; }
+@media (max-width: 900px) { .author .author-grid { grid-template-columns: 1fr; gap: 48px; } }
+.author .spec-sheet {
+  background: var(--warm-grey); border: 1px solid var(--blue);
+  position: sticky; top: 100px;
+}
+.author .spec-sheet-header {
+  background: var(--blue); color: var(--warm-grey);
+  padding: 16px 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 2px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.author .spec-sheet-header .dot {
+  display: inline-block; width: 8px; height: 8px;
+  background: var(--orange); margin-right: 8px;
+}
+.author .spec-row {
+  display: grid; grid-template-columns: 100px 1fr;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--rule);
+  align-items: baseline; gap: 16px;
+}
+.author .spec-row:last-child { border-bottom: none; }
+.author .spec-row .key {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--blue); opacity: 0.7;
+}
+.author .spec-row .val { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.4; }
+.author .essay h2 {
+  font-size: clamp(36px, 4.5vw, 56px); font-weight: 800;
+  line-height: 1; letter-spacing: -0.03em;
+  color: var(--blue); margin-bottom: 48px; max-width: 18ch;
+}
+.author .essay h2 .accent { color: var(--orange); }
+.author .essay p {
+  font-size: 18px; line-height: 1.65;
+  color: var(--ink-soft); margin-bottom: 24px;
+  font-weight: 400; max-width: 60ch;
+}
+.author .essay p strong { font-weight: 700; color: var(--blue); }
+.author .essay .signature {
+  margin-top: 48px; padding-top: 32px;
+  border-top: 2px solid var(--orange);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--blue);
+  display: flex; justify-content: space-between; align-items: baseline;
+  flex-wrap: wrap; gap: 16px;
+}
+.author .essay .signature strong {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px; font-weight: 700;
+  text-transform: none; letter-spacing: -0.01em; color: var(--blue);
+}
+
+.subscribe { padding: 100px 0; background: var(--warm-grey); border-bottom: 1px solid var(--blue); position: relative; }
+.subscribe .subscribe-grid {
+  display: grid; grid-template-columns: 1.1fr 1fr;
+  gap: 64px; max-width: 1100px; margin: 0 auto; align-items: stretch;
+}
+@media (max-width: 768px) { .subscribe .subscribe-grid { grid-template-columns: 1fr; gap: 32px; } }
+.subscribe .pitch .annotation {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--orange);
+  margin-bottom: 16px; padding-top: 8px;
+  border-top: 2px solid var(--orange); display: inline-block;
+}
+.subscribe .pitch h2 {
+  font-size: clamp(36px, 5vw, 56px); font-weight: 900;
+  line-height: 1; letter-spacing: -0.03em;
+  color: var(--blue); margin-bottom: 24px; max-width: 18ch;
+}
+.subscribe .pitch h2 .accent { color: var(--orange); }
+.subscribe .pitch p {
+  font-size: 18px; line-height: 1.55;
+  color: var(--ink-soft); margin-bottom: 32px; max-width: 44ch;
+}
+.subscribe .pitch ul { list-style: none; padding: 0; border-top: 1px solid var(--blue); }
+.subscribe .pitch li {
+  font-size: 15px; line-height: 1.5;
+  color: var(--ink-soft); padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+  display: grid; grid-template-columns: 28px 1fr;
+  gap: 12px; font-weight: 400;
+}
+.subscribe .pitch li::before {
+  content: "→";
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--orange); font-weight: 700; font-size: 16px;
+}
+.subscribe-card {
+  background: var(--blue); color: var(--warm-grey);
+  display: flex; flex-direction: column; position: relative;
+}
+.subscribe-card .term-header {
+  background: var(--blue-deep); padding: 12px 20px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--cyan);
+  border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+}
+.subscribe-card .term-header .dots { display: flex; gap: 6px; }
+.subscribe-card .term-header .dots span {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(245, 240, 235, 0.3);
+}
+.subscribe-card .term-header .dots span:first-child { background: var(--orange); }
+.subscribe-card .term-body { padding: 32px 32px 40px; flex: 1; display: flex; flex-direction: column; }
+.subscribe-card .term-line {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px; color: var(--cyan);
-  letter-spacing: 1.5px; text-transform: uppercase;
-  margin-bottom: 16px;
+  margin-bottom: 8px; letter-spacing: 0.5px;
 }
-.case h2 {
-  font-size: clamp(28px, 4vw, 42px);
-  font-weight: 900; margin-bottom: 24px;
-  line-height: 1.15; letter-spacing: -0.01em;
+.subscribe-card .term-line .prompt { color: var(--orange); margin-right: 8px; }
+.subscribe-card h3 {
+  font-size: 24px; font-weight: 800;
+  line-height: 1.15; color: var(--warm-grey);
+  margin: 16px 0 8px; letter-spacing: -0.01em;
 }
-.case h2 .num { color: var(--cyan); }
-.case .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 32px; margin-top: 48px;
+.subscribe-card .helper {
+  font-size: 14px; color: rgba(245, 240, 235, 0.6);
+  margin-bottom: 32px; line-height: 1.5;
 }
-.case .stat {
-  border-left: 3px solid var(--orange);
-  padding-left: 20px;
+.subscribe-card form { display: flex; flex-direction: column; margin-top: auto; }
+.subscribe-card .input-row {
+  border-bottom: 2px solid var(--cyan);
+  padding-bottom: 12px; margin-bottom: 24px;
+  display: flex; align-items: center; gap: 12px;
 }
-.case .stat .num {
-  font-size: 40px; font-weight: 900;
-  color: var(--cyan); line-height: 1;
-  margin-bottom: 8px;
+.subscribe-card .input-row::before {
+  content: ">";
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; font-weight: 700; color: var(--orange);
 }
-.case .stat .lbl {
-  font-size: 14px; color: rgba(255,255,255,0.8);
+.subscribe-card input {
+  flex: 1; padding: 8px 0; border: none; background: transparent;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px; color: var(--warm-grey); outline: none;
 }
-
-/* AUTHOR */
-.author-section {
-  padding: 100px 0;
+.subscribe-card input::placeholder { color: rgba(245, 240, 235, 0.4); }
+.subscribe-card button {
+  background: var(--orange); color: var(--warm-grey);
+  border: none; padding: 18px 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; transition: all 0.2s ease;
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 16px; width: 100%;
 }
-.author-section .grid {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 60px;
-  align-items: start;
+.subscribe-card button:hover { background: var(--warm-grey); color: var(--blue); }
+.subscribe-card button:disabled { opacity: 0.5; cursor: not-allowed; }
+.subscribe-card button .arrow { font-family: 'JetBrains Mono', monospace; font-size: 14px; }
+.subscribe-card .privacy {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: rgba(245, 240, 235, 0.4);
+  margin-top: 16px; letter-spacing: 1px; text-transform: uppercase;
 }
-.author-section h2 {
-  font-size: clamp(28px, 4vw, 40px);
-  font-weight: 900; color: var(--blue);
-  margin-bottom: 24px; letter-spacing: -0.02em;
+.subscribe-card .success {
+  display: none; padding: 24px;
+  border: 1px solid var(--orange);
+  background: rgba(255, 107, 26, 0.1);
+  font-size: 16px; line-height: 1.4;
+  color: var(--warm-grey); margin-top: 24px;
 }
-.author-section p { color: var(--text); margin-bottom: 16px; font-size: 16px; }
-.author-section .credentials {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  position: sticky;
-  top: 100px;
-}
-.author-section .credentials .item {
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-}
-.author-section .credentials .item:last-child { border-bottom: none; }
-.author-section .credentials .item .lbl {
+.subscribe-card .success.show { display: block; }
+.subscribe-card .success strong { color: var(--orange); display: block; margin-bottom: 4px; }
+.subscribe-card .error {
+  display: none; margin-top: 12px; padding: 8px 12px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px; color: var(--orange);
+  border-left: 2px solid var(--orange);
   letter-spacing: 1px; text-transform: uppercase;
-  margin-bottom: 4px;
 }
-.author-section .credentials .item strong {
-  display: block; color: var(--blue); font-weight: 700;
-}
+.subscribe-card .error.show { display: block; }
 
-/* FINAL CTA */
-.final-cta {
-  padding: 100px 0;
-  background: linear-gradient(135deg, var(--orange) 0%, #e55a0d 100%);
-  color: white;
-  text-align: center;
+footer { background: var(--blue); color: var(--warm-grey); padding: 64px 0 24px; position: relative; }
+footer::before {
+  content: ""; position: absolute;
+  top: 0; left: 0; right: 0; height: 4px;
+  background: var(--orange);
 }
-.final-cta h2 {
-  font-size: clamp(32px, 5vw, 52px);
-  font-weight: 900; margin-bottom: 24px;
-  line-height: 1.05; letter-spacing: -0.02em;
+footer .footer-grid {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px; padding-bottom: 48px;
+  border-bottom: 1px solid rgba(245, 240, 235, 0.2);
 }
-.final-cta p {
-  font-size: 20px; margin-bottom: 40px;
-  opacity: 0.95; max-width: 600px; margin-left: auto; margin-right: auto;
-}
-.final-cta .form-wrap {
-  background: white;
-  padding: 32px;
-  border-radius: 16px;
-  max-width: 520px;
-  margin: 0 auto;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-}
-.final-cta .success {
-  background: #d4f4dd; color: #0a5d2e;
-  padding: 16px; border-radius: 8px; margin-top: 12px;
-  display: none;
-}
-.final-cta .success.show { display: block; }
-.final-cta .error {
-  background: #fde2e2; color: #8b1a1a;
-  padding: 12px; border-radius: 8px;
-  margin-top: 12px; font-size: 14px;
-  display: none;
-}
-.final-cta .error.show { display: block; }
-
-/* FOOTER */
-footer {
-  background: var(--dark);
-  color: rgba(255,255,255,0.7);
-  padding: 40px 0;
-  font-size: 14px;
-}
-footer .container {
-  display: flex; justify-content: space-between;
-  align-items: center; flex-wrap: wrap; gap: 16px;
-}
-footer .links { display: flex; gap: 24px; }
-footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
-footer a:hover { color: var(--cyan); }
-
 @media (max-width: 768px) {
-  .author-section .grid { grid-template-columns: 1fr; }
-  .author-section .credentials { position: static; }
-  .hero { padding: 60px 0 40px; }
+  footer .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  footer .footer-grid > div:first-child { grid-column: 1 / -1; }
+}
+footer .colophon h4 {
+  font-size: 20px; font-weight: 800;
+  margin-bottom: 12px; color: var(--warm-grey);
+  letter-spacing: -0.01em;
+}
+footer .colophon p {
+  font-size: 14px; line-height: 1.5;
+  color: rgba(245, 240, 235, 0.6);
+  font-weight: 400; max-width: 38ch;
+}
+footer .links-block .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--cyan);
+  margin-bottom: 16px; padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+}
+footer .links-block ul { list-style: none; padding: 0; }
+footer .links-block li { padding: 4px 0; }
+footer .links-block a {
+  font-size: 14px; color: var(--warm-grey);
+  text-decoration: none; transition: color 0.2s; display: inline-block;
+}
+footer .links-block a:hover { color: var(--orange); }
+footer .legal {
+  margin-top: 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: 1.5px; color: rgba(245, 240, 235, 0.5);
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+}
+footer .legal .build { color: var(--orange); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero > .container > * { animation: fadeUp 0.5s ease-out backwards; }
+.hero .doc-id { animation-delay: 0.05s; }
+.hero h1 { animation-delay: 0.1s; }
+.hero .standfirst { animation-delay: 0.2s; }
+.hero .byline { animation-delay: 0.3s; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="container">
-    <div class="logo">Recruitment<span>Engineer</span>.nl</div>
-    <a href="#download" class="cta-mini">Download Stack</a>
-  </div>
-</nav>
+<div class="blueprint-bg"></div>
 
-<!-- HERO -->
+<header class="tech-header">
+  <div class="container">
+    <div class="logo">
+      <div class="logo-mark"><span>R</span></div>
+      <div class="logo-text">
+        <strong>Recruitin</strong>
+        Recruitment Engineering
+      </div>
+    </div>
+    <div class="meta">
+      <span><span class="dot"></span>VERSION 1.0</span>
+      <span>MEI 2026</span>
+      <span>NL · DOESBURG</span>
+    </div>
+  </div>
+</header>
+
 <section class="hero">
   <div class="container">
-    <span class="label">RECRUITMENT ENGINEERING STACK · v1.0 · MEI 2026</span>
-    <h1>Hoe ik <span class="highlight">47% sneller</span><br>technische kandidaten<br>vind met AI.</h1>
-    <p class="sub">5 productie-prompts. Inclusief case-data van €519k pipeline recovery, 41% InMail response rate en 73% screening accuracy. Gratis PDF.</p>
-    
-    <div class="author">
-      <div class="author-img">WA</div>
-      <div class="author-info">
-        <strong>Ing. W. Arts</strong>
-        <span>Recruitment Engineer · Recruitin B.V. · 20 jaar tech recruitment</span>
-      </div>
+    <div class="doc-id">
+      <span class="badge">STACK 2026</span>
+      <span>DOC-ID: REC-ENG-001</span>
+      <span class="rule"></span>
+      <span>CLASSIFICATIE: PUBLIEK</span>
     </div>
 
-    <div class="cta-form" id="download">
-      <h3>📥 Krijg de Stack 2026 PDF</h3>
-      <p>12 pagina's. 5 prompts. 0 bullshit. Direct in je inbox.</p>
-      <form id="leadForm">
-        <input type="email" id="email" placeholder="jouw@email.nl" required>
-        <button type="submit" id="submitBtn">Stuur me de PDF →</button>
-      </form>
-      <div class="success" id="success">
-        ✅ Check je inbox — de PDF is onderweg. Spam-folder ook even checken.
+    <h1>De enige ingenieur die recruitment heeft <span class="accent">gereverse&#8209;engineered</span>.</h1>
+
+    <p class="standfirst">Twintig jaar onderbuik en templates. <strong>Vijf productie-prompts</strong> uit het werk bij Veco, Beutech en Euromaster. Eén meetbaar systeem voor technisch recruitment in het AI-tijdperk.</p>
+
+    <div class="byline">
+      <div class="byline-block">
+        <div class="label">Auteur</div>
+        <div class="value">Ing. W. Arts</div>
       </div>
-      <div class="error" id="error"></div>
-      <p class="privacy">Geen spam. 1 mail per week. Uitschrijven = 1 klik.</p>
+      <div class="byline-block">
+        <div class="label">Functie</div>
+        <div class="value">Recruitment Engineer</div>
+      </div>
+      <div class="byline-block">
+        <div class="label">Bedrijf</div>
+        <div class="value">Recruitin B.V.</div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- TRUST -->
-<section class="trust">
+<section class="specs-bar">
   <div class="container">
-    <div class="label">Vertrouwd door tech bedrijven</div>
-    <div class="logos">
-      <div class="logo-item">VECO</div>
-      <div class="logo-item">BEUTECH</div>
-      <div class="logo-item">EUROMASTER</div>
+    <div class="specs-header">
+      <span><span class="dot"></span>PERFORMANCE METRICS · PRODUCTIE-DATA Q1 2026</span>
+      <span>n=200+ vacatures</span>
+    </div>
+  </div>
+  <div class="specs-grid">
+    <div class="spec">
+      <div class="corner">M01</div>
+      <div class="label">Sourcing</div>
+      <div class="figure">25<span class="small">min</span></div>
+      <div class="caption">Tijd per boolean search<br>(was 4 uur)</div>
+    </div>
+    <div class="spec">
+      <div class="corner">M02</div>
+      <div class="label">Outreach</div>
+      <div class="figure">41<span class="pct">%</span></div>
+      <div class="caption">InMail response rate<br>(benchmark: 8%)</div>
+    </div>
+    <div class="spec">
+      <div class="corner">M04</div>
+      <div class="label">Screening</div>
+      <div class="figure">73<span class="pct">%</span></div>
+      <div class="caption">Match-score accuracy<br>(handmatig vergeleken)</div>
+    </div>
+    <div class="spec">
+      <div class="corner">M05</div>
+      <div class="label">Pipeline</div>
+      <div class="figure">€519<span class="small">k</span></div>
+      <div class="caption">Stuck deals · 60% recovered<br>in 90 dagen</div>
     </div>
   </div>
 </section>
 
-<!-- STACK -->
+<section class="intro">
+  <div class="container">
+    <span class="annotation">§ 01 · MANIFEST</span>
+    <h2>Recruitment werkt nog steeds met <span class="underline">onderbuik en templates</span>.</h2>
+
+    <div class="body-grid">
+      <aside class="marker-col">
+        <div class="key">— Locatie —</div>
+        <div class="value">Doesburg, NL</div>
+        <div class="key">— Sector —</div>
+        <div class="value">Tech mid-market</div>
+        <div class="key">— Trust markers —</div>
+        <div class="value">Veco<br>Beutech<br>Euromaster</div>
+      </aside>
+
+      <div class="body-col">
+        <p>In 2005 kwam ik per ongeluk in recruitment terecht. Opgeleid als werktuigbouwkundig ingenieur, was ik gewend aan systemen die je kon meten, optimaliseren en schalen. <strong>Wat ik in recruitment aantrof was iets anders</strong>: een vak dat draaide op onderbuik en templates.</p>
+
+        <p>Twee decennia later is het verschil tussen een recruiter met ChatGPT en een recruitment engineer met een stack gigantisch geworden. De eerste vraagt willekeurig wat aan een LLM en hoopt op een hit. De tweede heeft 5+ specifieke prompts, getest tegen honderden cases, in een systematisch proces met meetbare output per stap.</p>
+
+        <div class="pullquote">
+          Het verschil zit niet in welke AI je gebruikt — het zit in of je AI gebruikt als <em>jukebox</em> of als <em>stack</em>.
+        </div>
+
+        <p>Wat hieronder volgt is geen theorie. Het zijn vijf productie-prompts die ik dagelijks gebruik bij Veco, Beutech en Euromaster — drie technische bedrijven met samen ruim 800 medewerkers. Ze besparen mij <strong>32 uur recruiter-werk per week</strong> en leverden in het laatste kwartaal vier hires op die zonder dit systeem niet zouden zijn gevonden.</p>
+
+        <p>Ik publiceer ze gratis omdat het werk te belangrijk is om er een betaalmuur omheen te bouwen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="stack">
   <div class="container">
-    <h2>De 5-laagse Stack.</h2>
-    <p class="intro">90% van de recruiters werkt op laag 1: posten + zoeken + bellen. De échte impact zit in laag 2 t/m 5. Daar wordt 80% van de leverage gemist.</p>
-    
-    <div class="stack-grid">
-      <div class="stack-card">
-        <div class="num">MODULE 01</div>
-        <h3>Sourcing Engineering</h3>
-        <p class="desc">AI-prompted boolean searches die in 25 minuten de zoekstrategie leveren waar je normaal 4 uur over doet.</p>
-        <span class="metric">4u → 25min</span>
-      </div>
-      <div class="stack-card">
-        <div class="num">MODULE 02</div>
-        <h3>Hyper-Personalization Outreach</h3>
-        <p class="desc">InMails op maat in 2 minuten. Subject + opener + 3 hooks (post/skill/pijn) + CTA. Test base: 41% response rate vs 8% benchmark.</p>
-        <span class="metric">41% response</span>
-      </div>
-      <div class="stack-card">
-        <div class="num">MODULE 03</div>
-        <h3>Vacature Intake Mastery</h3>
-        <p class="desc">Transcript van 30-min intake-call → complete vacature-package: tekst, USPs, ICP, sourcing-plan, interview-vragen, salaris-advies.</p>
-        <span class="metric">8u → 90min</span>
-      </div>
-      <div class="stack-card">
-        <div class="num">MODULE 04</div>
-        <h3>Match Score Calculator</h3>
-        <p class="desc">CV vs vacature scoring (0-100) met 6-component breakdown, gap analysis en interview-vragen op maat. 73% accuracy vs handmatig.</p>
-        <span class="metric">20min → 4min/CV</span>
-      </div>
-      <div class="stack-card">
-        <div class="num">MODULE 05</div>
-        <h3>Pipeline Health Diagnostician</h3>
-        <p class="desc">Pipedrive export → bottleneck analysis + 3-stappen recovery-plan per stuck deal. Voor wanneer "we kijken er nog naar" niet meer werkt.</p>
-        <span class="metric">€519k recovery</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CASE -->
-<section class="case">
-  <div class="container">
-    <div class="label">CASE · JOBDIGGER PIPELINE</div>
-    <h2>Hoe ik <span class="num">€519k</span> stuck pipeline<br>weer in beweging kreeg.</h2>
-    <p style="font-size: 18px; opacity: 0.85; max-width: 700px;">Een tech-klant zat 6 maanden vast in Stage 2. Vacatures bleven open, kandidaten werden koud, klanten klaagden. Met de Pipeline Diagnostician (Module 5) heb ik in 30 minuten geanalyseerd waar het werkelijk fout ging — en welke 3 acties per deal nodig waren.</p>
-    
-    <div class="grid">
-      <div class="stat">
-        <div class="num">€519k</div>
-        <div class="lbl">Stuck pipeline value</div>
-      </div>
-      <div class="stat">
-        <div class="num">60%</div>
-        <div class="lbl">Recovered in 90 dagen</div>
-      </div>
-      <div class="stat">
-        <div class="num">30 min</div>
-        <div class="lbl">AI-diagnose vs maanden gokken</div>
-      </div>
-      <div class="stat">
-        <div class="num">3</div>
-        <div class="lbl">Concrete acties per stuck deal</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- AUTHOR -->
-<section class="author-section">
-  <div class="container">
-    <div class="grid">
-      <div class="credentials">
-        <div class="item">
-          <div class="lbl">Naam</div>
-          <strong>Ing. Wouter Arts</strong>
-        </div>
-        <div class="item">
-          <div class="lbl">Bedrijf</div>
-          <strong>Recruitin B.V. · Doesburg</strong>
-        </div>
-        <div class="item">
-          <div class="lbl">Opleiding</div>
-          <strong>HBO Werktuigbouwkunde</strong>
-        </div>
-        <div class="item">
-          <div class="lbl">Ervaring</div>
-          <strong>20 jaar tech recruitment</strong>
-        </div>
-        <div class="item">
-          <div class="lbl">Sectoren</div>
-          <strong>Oil & Gas · Constructie · Productie · Automation · Renewable</strong>
-        </div>
-        <div class="item">
-          <div class="lbl">Regio</div>
-          <strong>Gelderland · Overijssel · Noord-Brabant</strong>
-        </div>
-      </div>
-      
+    <div class="section-head">
       <div>
-        <h2>Waarom een ingenieur recruitment heeft gereverse-engineered.</h2>
-        <p>Ik ben opgeleid als werktuigbouwkundig ingenieur. In 2005 kwam ik per ongeluk in recruitment terecht — en zag iets vreemds. Iedereen werkte met onderbuik en templates. Niemand had een proces dat je kon meten, optimaliseren of schalen.</p>
-        <p>Dat was 20 jaar geleden. Inmiddels heeft AI zoveel veranderd dat het verschil tussen "recruiter met chatGPT" en "recruitment engineer met een stack" gigantisch is geworden. Mid-market tech bedrijven (50-800 FTE) verliezen elke maand zes cijfers omdat hun recruitment-proces niet schaalt.</p>
-        <p>Deze Stack 2026 is wat ik dagelijks gebruik bij Veco, Beutech en Euromaster. Niet theorie — productie-prompts die vandaag werken. Ik publiceer ze gratis omdat het werk te belangrijk is om er een betaalmuur omheen te bouwen.</p>
+        <span class="annotation">§ 02 · DE STACK</span>
+        <h2>Vijf modules.<br><span class="accent">Eén</span> systeem.</h2>
+      </div>
+      <p class="description">Negentig procent van de recruiters werkt op laag één: posten, zoeken, bellen. De daadwerkelijke leverage zit in laag twee tot vijf — daar wordt 80% van de tijd gewonnen.</p>
+    </div>
+
+    <div class="modules-schematic">
+      <div class="module">
+        <div class="module-id"><span class="num">M01</span><span class="name">Sourcing</span></div>
+        <h3>Sourcing<br>Engineering</h3>
+        <p class="description">AI-prompted boolean searches die in 25 minuten de zoekstrategie leveren waar de gemiddelde recruiter vier uur over doet. Skill-driven, niet titel-driven.</p>
+        <div class="metric-block"><span class="lbl">Throughput</span><span class="val">4u → 25min</span></div>
+      </div>
+      <div class="module">
+        <div class="module-id"><span class="num">M02</span><span class="name">Outreach</span></div>
+        <h3>Hyper&#8209;<br>Personalization</h3>
+        <p class="description">InMails op maat in 2 minuten — subject, opener, drie hooks (post, skill, onuitgesproken pijn) en een zachte CTA. 41% response rate.</p>
+        <div class="metric-block"><span class="lbl">Response</span><span class="val">8% → 41%</span></div>
+      </div>
+      <div class="module">
+        <div class="module-id"><span class="num">M03</span><span class="name">Intake</span></div>
+        <h3>Vacature Intake<br>Mastery</h3>
+        <p class="description">Een transcript van een 30-minuten klantgesprek wordt een complete vacature: tekst, USP's, ICP, sourcing-plan, interview-vragen en salaris-advies in 90 minuten.</p>
+        <div class="metric-block"><span class="lbl">Cycle time</span><span class="val">8u → 90m</span></div>
+      </div>
+      <div class="module">
+        <div class="module-id"><span class="num">M04</span><span class="name">Screening</span></div>
+        <h3>Match Score<br>Calculator</h3>
+        <p class="description">CV's gewogen op vijf dimensies — must-haves, nice-to-haves, ervaring, trajectory, soft signals — met gap analysis en interview-vragen op maat.</p>
+        <div class="metric-block"><span class="lbl">Throughput</span><span class="val">20m → 4m / CV</span></div>
+      </div>
+      <div class="module">
+        <div class="module-id"><span class="num">M05</span><span class="name">Pipeline</span></div>
+        <h3>Pipeline Health<br>Diagnostician</h3>
+        <p class="description">Een Pipedrive export wordt een bottleneck-analyse plus drie-stappen recovery-plan per vastgelopen deal. Voor wanneer "we kijken er nog naar" niet meer werkt.</p>
+        <div class="metric-block"><span class="lbl">Recovery</span><span class="val">€519k · 60%</span></div>
+      </div>
+      <div class="module bonus">
+        <div class="module-id"><span class="num">⚡ DOWNLOAD</span><span class="name">Stack 2026 PDF</span></div>
+        <h3>De complete stack — gratis.</h3>
+        <p class="description">Twaalf pagina's. Vijf prompts. Copy-paste-klaar voor Claude, ChatGPT en Gemini. Geen e-mail funnel-trucjes.</p>
+        <div class="metric-block"><span class="lbl">Format</span><span class="val">PDF · 12p</span></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FINAL CTA -->
-<section class="final-cta">
+<section class="case-study">
   <div class="container">
-    <h2>Stop met 4 uur per vacature<br>aan boolean searches.</h2>
-    <p>Krijg de complete Stack 2026 nu. 12 pagina's. 5 prompts. Direct toepasbaar.</p>
-    
-    <div class="form-wrap">
-      <form id="leadForm2">
-        <input type="email" id="email2" placeholder="jouw@email.nl" required style="width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 8px; font-size: 16px; margin-bottom: 12px; font-family: inherit;">
-        <button type="submit" id="submitBtn2" style="width: 100%; background: var(--blue); color: white; border: none; padding: 16px; border-radius: 8px; font-weight: 700; font-size: 16px; cursor: pointer; font-family: inherit;">Stuur me de Stack 2026 PDF →</button>
-      </form>
-      <p style="font-size: 12px; color: var(--muted); margin-top: 12px;">Geen spam · Gratis · Direct in je inbox</p>
-      <div class="success" id="success2">✅ Check je inbox — de PDF is onderweg.</div>
-      <div class="error" id="error2"></div>
+    <div class="case-meta">
+      <div class="item"><div class="key">Case ID</div><div class="val">REC-CASE-001</div></div>
+      <div class="item"><div class="key">Sector</div><div class="val">Tech</div></div>
+      <div class="item"><div class="key">Periode</div><div class="val">90 dagen</div></div>
+      <div class="item"><div class="key">Tooling</div><div class="val">Module M05</div></div>
+    </div>
+
+    <h2>Hoe we <span class="number">€519.000</span> aan vastgelopen pipeline weer in beweging kregen.</h2>
+
+    <p class="lede">Zes maanden stilstand. Een directeur die opbelde met de woorden: <strong>"Wouter, ik weet niet eens meer waar ik moet beginnen."</strong> Het probleem bleek niet sourcing, niet salaris, niet de markt — maar de eerste interview zelf. Diagnose in 30 minuten via Module 5. Drie acties per stuck deal. Dit is wat er gebeurde.</p>
+
+    <div class="results-grid">
+      <div class="result"><div class="corner-label">∆ INPUT</div><div class="figure">€519k</div><div class="label">Stuck pipeline value</div></div>
+      <div class="result"><div class="corner-label">∆ OUTPUT</div><div class="figure">60<span class="pct">%</span></div><div class="label">Recovered in 90 dagen</div></div>
+      <div class="result"><div class="corner-label">T = 0</div><div class="figure">30m</div><div class="label">AI-diagnose tijd</div></div>
+      <div class="result"><div class="corner-label">∆ HIRES</div><div class="figure">7</div><div class="label">Hires uit "dode" deals</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="author">
+  <div class="container">
+    <div class="author-grid">
+      <aside class="spec-sheet">
+        <div class="spec-sheet-header">
+          <span><span class="dot"></span>SPEC-SHEET</span>
+          <span>v1.0</span>
+        </div>
+        <div class="spec-row"><div class="key">Naam</div><div class="val">Ing. Wouter Arts</div></div>
+        <div class="spec-row"><div class="key">Bedrijf</div><div class="val">Recruitin B.V.<br>Doesburg, NL</div></div>
+        <div class="spec-row"><div class="key">Opleiding</div><div class="val">HBO Werktuigbouwkunde</div></div>
+        <div class="spec-row"><div class="key">Sinds</div><div class="val">2005 · Tech recruitment</div></div>
+        <div class="spec-row"><div class="key">Sectoren</div><div class="val">Oil &amp; Gas<br>Constructie<br>Productie<br>Automation<br>Renewables</div></div>
+        <div class="spec-row"><div class="key">Regio</div><div class="val">Gelderland<br>Overijssel<br>Noord-Brabant</div></div>
+        <div class="spec-row"><div class="key">Klanten</div><div class="val">Veco · Beutech<br>Euromaster · e.a.</div></div>
+      </aside>
+
+      <article class="essay">
+        <h2>Waarom een ingenieur recruitment heeft <span class="accent">gereverse&#8209;engineered</span>.</h2>
+
+        <p>Een werktuigbouwkundig ingenieur leert om systemen te ontleden — kracht-werking, materiaaleigenschappen, faalmodus per component. Wat me in 2005 opviel toen ik recruitment binnenstapte, was hoe weinig van die discipline werd toegepast op een vak dat in essentie ook een proces is. <strong>Een proces met inputs, doorlooptijden, conversies en bottlenecks.</strong> Maar in de praktijk werd het vrijwel nergens als zodanig behandeld.</p>
+
+        <p>Twintig jaar later staan we op een kantelpunt. AI maakt het voor het eerst mogelijk om recruitment écht te schalen zonder kwaliteitsverlies. Niet door <strong>meer</strong> te doen — maar door het werk fundamenteel anders te organiseren. De recruiters die dit doorhebben, lopen vijf tot zeven uur per dag voor op hun collega's. Op jaarbasis is dat het verschil tussen één en drie hires per maand.</p>
+
+        <p>Mid-market technische bedrijven — 50 tot 800 medewerkers — verliezen elke maand zes cijfers aan vacatures die niet vol komen. Niet omdat het talent er niet is, maar omdat hun recruitment-proces niet schaalt. Dat is waar deze stack vandaan komt. Het is wat ik dagelijks toepas. Niets verzonnen — productie-prompts uit het werk bij Veco, Beutech en Euromaster.</p>
+
+        <p>Ik publiceer ze omdat het werk te belangrijk is om er een betaalmuur omheen te bouwen. Als jij door deze stack één betere hire doet, heeft mijn maandag al impact gehad.</p>
+
+        <div class="signature">
+          <div>
+            <strong>Ing. W. Arts</strong>
+            <div style="margin-top: 4px;">Doesburg · Mei 2026</div>
+          </div>
+          <span>— END §03 —</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="subscribe" id="download">
+  <div class="container">
+    <div class="subscribe-grid">
+      <div class="pitch">
+        <span class="annotation">§ 04 · DOWNLOAD</span>
+        <h2>Krijg de complete <span class="accent">stack</span> in je inbox.</h2>
+        <p>Twaalf pagina's. Vijf productie-prompts. Eén PDF. Geen e-mail funnel-trucjes.</p>
+        <ul>
+          <li>Vijf prompts, copy-paste-klaar voor Claude, GPT en Gemini</li>
+          <li>Volledige case-data van €519k pipeline recovery</li>
+          <li>Het exacte intake-protocol dat ik bij elke klant gebruik</li>
+          <li>Eén e-mail per week — uitschrijven met één klik</li>
+        </ul>
+      </div>
+
+      <div class="subscribe-card">
+        <div class="term-header">
+          <div class="dots"><span></span><span></span><span></span></div>
+          <span>~/stack-2026 — REQUEST</span>
+        </div>
+        <div class="term-body">
+          <div class="term-line"><span class="prompt">$</span>./request-stack-2026.sh</div>
+          <div class="term-line" style="color: rgba(245,240,235,0.5); margin-bottom: 16px;">→ initializing download · 12p PDF · 5 prompts</div>
+
+          <h3>Stack 2026 — gratis PDF</h3>
+          <p class="helper">Direct in je inbox · Spam-folder ook even checken</p>
+
+          <form id="leadForm">
+            <div class="input-row">
+              <input type="email" id="email" placeholder="enter_email@domain.nl" required autocomplete="email">
+            </div>
+            <button type="submit" id="submitBtn">
+              <span>EXECUTE · STUUR PDF</span>
+              <span class="arrow">→</span>
+            </button>
+          </form>
+
+          <div class="success" id="success">
+            <strong>✓ Status: 200 OK</strong>
+            De PDF is verzonden naar je inbox.
+          </div>
+
+          <div class="error" id="error"></div>
+
+          <p class="privacy">// privacy: 1 mail/week · uitschrijven = 1 klik</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 <footer>
   <div class="container">
-    <div>© 2026 Recruitin B.V. · KvK Doesburg · Ing. W. Arts</div>
-    <div class="links">
-      <a href="https://recruitin.nl">Recruitin.nl</a>
-      <a href="https://linkedin.com/in/wouter-arts">LinkedIn</a>
-      <a href="mailto:warts@recruitin.nl">Contact</a>
+    <div class="footer-grid">
+      <div class="colophon">
+        <h4>Recruitment Engineering</h4>
+        <p>Een uitgave van Recruitin B.V. Geschreven door Ing. W. Arts in Doesburg, voor recruiters en technische bedrijven die hun proces serieus nemen.</p>
+      </div>
+      <div class="links-block">
+        <div class="label">— Stack —</div>
+        <ul>
+          <li><a href="#download">Download PDF</a></li>
+          <li><a href="https://recruitin.nl">Recruitin.nl</a></li>
+          <li><a href="https://linkedin.com/in/wouter-arts">LinkedIn</a></li>
+        </ul>
+      </div>
+      <div class="links-block">
+        <div class="label">— Contact —</div>
+        <ul>
+          <li><a href="mailto:warts@recruitin.nl">warts@recruitin.nl</a></li>
+          <li><a href="tel:0313410507">0313 410 507</a></li>
+          <li>Doesburg, NL</li>
+        </ul>
+      </div>
+      <div class="links-block">
+        <div class="label">— Sectoren —</div>
+        <ul>
+          <li>Oil &amp; Gas</li>
+          <li>Constructie</li>
+          <li>Productie · Automation</li>
+          <li>Renewable Energy</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="legal">
+      <div>© 2026 RECRUITIN B.V. · KVK · ALL RIGHTS RESERVED</div>
+      <div class="build">BUILD: STACK-2026.v1.0 · MEI/2026</div>
     </div>
   </div>
 </footer>
 
 <script>
-// Email capture handler — connects to Resend via API endpoint
 async function handleSubmit(formId, btnId, emailId, successId, errorId) {
   const form = document.getElementById(formId);
   if (!form) return;
@@ -576,34 +1023,39 @@ async function handleSubmit(formId, btnId, emailId, successId, errorId) {
     const btn = document.getElementById(btnId);
     const emailInput = document.getElementById(emailId);
     const success = document.getElementById(successId);
-    const error = document.getElementById(errorId);
+    const error = errorId ? document.getElementById(errorId) : null;
     const email = emailInput.value.trim();
-    
+
     if (!email || !email.includes('@')) {
-      if (error) { error.textContent = 'Vul een geldig e-mailadres in.'; error.classList.add('show'); }
+      if (error) { error.textContent = '! ERROR: invalid email'; error.classList.add('show'); }
       return;
     }
-    
+
     btn.disabled = true;
-    btn.textContent = 'Bezig...';
+    const original = btn.innerHTML;
+    btn.innerHTML = '<span>EXECUTING…</span><span class="arrow">·</span>';
     if (error) error.classList.remove('show');
-    
+
     try {
       const response = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, source: 'recruitmentengineer.nl' })
       });
-      
+
       if (!response.ok) throw new Error('Subscribe failed');
-      
+
       form.style.display = 'none';
       success.classList.add('show');
+
+      if (window.gtag) {
+        window.gtag('event', 'lead_magnet_download', { source: 'stack_2026' });
+      }
     } catch (err) {
       btn.disabled = false;
-      btn.textContent = 'Stuur me de PDF →';
+      btn.innerHTML = original;
       if (error) {
-        error.textContent = 'Er ging iets mis. Probeer opnieuw of mail warts@recruitin.nl';
+        error.textContent = '! ERROR: try again or mail warts@recruitin.nl';
         error.classList.add('show');
       }
     }
@@ -611,7 +1063,6 @@ async function handleSubmit(formId, btnId, emailId, successId, errorId) {
 }
 
 handleSubmit('leadForm', 'submitBtn', 'email', 'success', 'error');
-handleSubmit('leadForm2', 'submitBtn2', 'email2', 'success2', 'error2');
 </script>
 
 </body>
