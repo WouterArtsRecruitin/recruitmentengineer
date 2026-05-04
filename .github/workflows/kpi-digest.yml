@@ -1,0 +1,30 @@
+name: "KPI digest (Stack 2026)"
+
+on:
+  schedule:
+    # 07:00 UTC = 09:00 NL summer / 08:00 NL winter — runs before email-drip & lead-scorer
+    - cron: "0 7 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install --no-cache-dir requests
+
+      - name: Send KPI digest
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          PIPEDRIVE_API_TOKEN: ${{ secrets.PIPEDRIVE_API_TOKEN }}
+          PIPEDRIVE_DOMAIN: ${{ secrets.PIPEDRIVE_DOMAIN || 'recruitin' }}
+          PIPEDRIVE_PIPELINE_ID: "16"
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: python3 07-automation-pipeline/kpi-digest/send_digest.py --verbose
