@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Recruitment, Reengineered. — Ing. W. Arts · Recruitin</title>
+<meta name="description" content="The Stack behind the hires. Vijf productie-prompts. Vier jaar werk bij Veco, Beutech, Euromaster. Built to be experienced.">
+<meta name="theme-color" content="#0a0908">
+<meta property="og:title" content="Recruitment, Reengineered.">
+<meta property="og:description" content="The Stack behind the hires. Built to be experienced.">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #0a0908;
+  --bg-2: #14110f;
+  --fg: #f5f2ee;
+  --fg-dim: rgba(245, 242, 238, 0.62);
+  --fg-faint: rgba(245, 242, 238, 0.32);
+  --copper: #d97706;
+  --copper-bright: #f59e0b;
+  --rule: rgba(245, 242, 238, 0.08);
+  --rule-strong: rgba(245, 242, 238, 0.18);
+  --serif: 'Instrument Serif', Georgia, serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-weight: 400;
+  line-height: 1.55;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img, video { display: block; max-width: 100%; }
+
+/* ─────────── NAV ─────────── */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 18px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(10, 9, 8, 0.65);
+  backdrop-filter: saturate(120%) blur(8px);
+  -webkit-backdrop-filter: saturate(120%) blur(8px);
+  border-bottom: 1px solid var(--rule);
+}
+.nav-mark {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-mark::before {
+  content: '';
+  width: 8px; height: 8px;
+  background: var(--copper);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--copper);
+}
+.nav-meta {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--fg-faint);
+  text-transform: uppercase;
+}
+@media (max-width: 640px) {
+  .nav { padding: 14px 18px; }
+  .nav-meta { display: none; }
+}
+
+/* ─────────── HERO SCROLLYTELLING ─────────── */
+.hero {
+  position: relative;
+  height: 700vh; /* 7 acts × 100vh of scroll runway */
+}
+.hero-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+/* Video / static frame stack */
+.act-media {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 1;
+}
+.act-media.active { opacity: 1; z-index: 2; }
+.act-media video,
+.act-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Vignette + gradient over media */
+.hero-stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, transparent 35%, rgba(10, 9, 8, 0.55) 100%),
+    linear-gradient(to bottom, rgba(10, 9, 8, 0.35) 0%, transparent 30%, transparent 70%, rgba(10, 9, 8, 0.75) 100%);
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Text overlay */
+.act-text {
+  position: absolute;
+  z-index: 10;
+  left: 6vw;
+  bottom: 14vh;
+  max-width: 720px;
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+.act-text.active { opacity: 1; transform: translateY(0); }
+.act-number {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--copper);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.act-title {
+  font-family: var(--serif);
+  font-size: clamp(56px, 9vw, 124px);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin-bottom: 18px;
+}
+.act-title em { font-style: italic; color: var(--copper-bright); }
+.act-caption {
+  font-family: var(--sans);
+  font-size: clamp(15px, 1.4vw, 18px);
+  line-height: 1.55;
+  color: var(--fg-dim);
+  max-width: 540px;
+  font-weight: 300;
+}
+@media (max-width: 640px) {
+  .act-text { left: 22px; right: 22px; bottom: 18vh; max-width: none; }
+  .act-title { font-size: clamp(44px, 12vw, 72px); }
+}
+
+/* Scroll hint */
+.scroll-hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--fg-faint);
+  text-transform: uppercase;
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: bob 2.4s ease-in-out infinite;
+}
+.scroll-hint::before,
+.scroll-hint::after {
+  content: '';
+  width: 32px; height: 1px;
+  background: var(--fg-faint);
+}
+@keyframes bob {
+  0%, 100% { transform: translate(-50%, 0); opacity: 0.65; }
+  50% { transform: translate(-50%, 4px); opacity: 1; }
+}
+.scroll-hint.hidden { opacity: 0; transition: opacity 0.3s; }
+
+/* Hero progress dots */
+.hero-progress {
+  position: absolute;
+  right: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 12;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.hero-progress-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--fg-faint);
+  transition: all 0.4s ease;
+  cursor: pointer;
+}
+.hero-progress-dot.active {
+  background: var(--copper);
+  transform: scale(1.6);
+  box-shadow: 0 0 8px var(--copper);
+}
+@media (max-width: 640px) {
+  .hero-progress { right: 16px; gap: 10px; }
+  .hero-progress-dot { width: 5px; height: 5px; }
+}
+
+/* Doc-ID corner */
+.hero-doc-id {
+  position: absolute;
+  top: 78px;
+  left: 36px;
+  z-index: 12;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--fg-faint);
+  text-transform: uppercase;
+  line-height: 1.6;
+}
+.hero-doc-id strong { color: var(--copper); font-weight: 500; }
+@media (max-width: 640px) {
+  .hero-doc-id { left: 18px; top: 64px; font-size: 9px; }
+}
+
+/* ─────────── SECTION BASE ─────────── */
+section.content {
+  position: relative;
+  padding: 140px 6vw;
+  max-width: 1480px;
+  margin: 0 auto;
+  z-index: 20;
+  background: var(--bg);
+}
+@media (max-width: 768px) {
+  section.content { padding: 80px 22px; }
+}
+
+.section-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--copper);
+  text-transform: uppercase;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.section-label::before {
+  content: '';
+  width: 28px; height: 1px;
+  background: var(--copper);
+}
+
+/* ─────────── §01 MANIFEST ─────────── */
+.manifest {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  border-top: 1px solid var(--rule);
+  padding-top: 100px;
+}
+@media (max-width: 900px) {
+  .manifest { grid-template-columns: 1fr; gap: 48px; }
+}
+.manifest-portrait {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: 4px;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, #2a2522 0%, #14110f 100%),
+    radial-gradient(circle at 30% 30%, rgba(217, 119, 6, 0.15), transparent 60%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.manifest-portrait::after {
+  content: 'DOC-A · RAFFINADERIJ · OIL & GAS · NL';
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--fg);
+  text-transform: uppercase;
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  padding: 6px 10px;
+  background: rgba(10, 9, 8, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-left: 2px solid var(--copper);
+}
+.manifest-portrait img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.manifest-portrait .placeholder-text {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--fg-faint);
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0 24px;
+  line-height: 1.8;
+}
+
+.manifest-text h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(40px, 5.4vw, 72px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  margin-bottom: 36px;
+}
+.manifest-text h2 em {
+  font-style: italic;
+  color: var(--copper-bright);
+}
+.manifest-text p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--fg-dim);
+  margin-bottom: 22px;
+  font-weight: 300;
+}
+.manifest-text p strong {
+  color: var(--fg);
+  font-weight: 500;
+}
+
+/* ─────────── §02 THE STACK (M01–M05) ─────────── */
+.stack {
+  border-top: 1px solid var(--rule);
+  padding-top: 100px;
+  margin-top: 100px;
+}
+.stack-header {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 60px;
+  margin-bottom: 80px;
+  align-items: end;
+}
+@media (max-width: 900px) {
+  .stack-header { grid-template-columns: 1fr; gap: 32px; }
+}
+.stack-header h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(40px, 5.4vw, 72px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.stack-header h2 em { font-style: italic; color: var(--copper-bright); }
+.stack-header p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--fg-dim);
+  font-weight: 300;
+}
+
+.module {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  padding: 60px 0;
+  border-top: 1px solid var(--rule);
+}
+.module:nth-child(even) .module-visual { order: -1; }
+@media (max-width: 900px) {
+  .module { grid-template-columns: 1fr; gap: 32px; padding: 40px 0; }
+  .module:nth-child(even) .module-visual { order: 0; }
+}
+
+.module-id {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  color: var(--copper);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.module-title {
+  font-family: var(--serif);
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  margin-bottom: 20px;
+}
+.module-desc {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--fg-dim);
+  margin-bottom: 28px;
+  font-weight: 300;
+  max-width: 480px;
+}
+.module-stats {
+  display: flex;
+  gap: 36px;
+  flex-wrap: wrap;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule);
+}
+.module-stat-num {
+  font-family: var(--serif);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--copper-bright);
+  display: block;
+  margin-bottom: 4px;
+  font-style: italic;
+}
+.module-stat-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--fg-faint);
+  text-transform: uppercase;
+}
+
+.module-visual {
+  aspect-ratio: 4 / 3;
+  border-radius: 4px;
+  background:
+    linear-gradient(135deg, #1a1715 0%, #0e0c0b 100%);
+  border: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.module-visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(217, 119, 6, 0.08), transparent 50%),
+    repeating-linear-gradient(0deg, transparent 0, transparent 40px, rgba(245, 242, 238, 0.02) 40px, rgba(245, 242, 238, 0.02) 41px),
+    repeating-linear-gradient(90deg, transparent 0, transparent 40px, rgba(245, 242, 238, 0.02) 40px, rgba(245, 242, 238, 0.02) 41px);
+}
+.module-visual-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--fg-faint);
+  text-transform: uppercase;
+  z-index: 2;
+  position: relative;
+}
+
+/* ─────────── §03 FIELD REPORT ─────────── */
+.field-report {
+  border-top: 1px solid var(--rule);
+  padding-top: 100px;
+  margin-top: 100px;
+}
+.field-report-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 80px;
+  align-items: center;
+}
+@media (max-width: 900px) {
+  .field-report-grid { grid-template-columns: 1fr; gap: 48px; }
+}
+.field-report-image {
+  aspect-ratio: 4 / 5;
+  background:
+    linear-gradient(135deg, #1f1a17 0%, #0a0908 100%),
+    radial-gradient(circle at 70% 40%, rgba(217, 119, 6, 0.18), transparent 50%);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.field-report-image::after {
+  content: 'DOC-B · BOUWPLAATS · CONSTRUCTION · NL';
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--fg);
+  text-transform: uppercase;
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  padding: 6px 10px;
+  background: rgba(10, 9, 8, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-left: 2px solid var(--copper);
+}
+.field-report-image img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.field-report-image .placeholder-text {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--fg-faint);
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0 24px;
+  line-height: 1.8;
+}
+
+.field-report h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(40px, 5.4vw, 72px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+.field-report h2 em { font-style: italic; color: var(--copper-bright); }
+.field-report-meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--fg-faint);
+  text-transform: uppercase;
+  margin-bottom: 30px;
+}
+.field-report-body p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--fg-dim);
+  margin-bottom: 22px;
+  font-weight: 300;
+}
+.field-report-body strong { color: var(--fg); font-weight: 500; }
+
+.report-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 36px;
+  padding-top: 36px;
+  border-top: 1px solid var(--rule);
+}
+@media (max-width: 600px) {
+  .report-stats { grid-template-columns: repeat(2, 1fr); gap: 22px; }
+}
+.report-stat-num {
+  font-family: var(--serif);
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 400;
+  line-height: 1;
+  color: var(--copper-bright);
+  font-style: italic;
+  display: block;
+  margin-bottom: 8px;
+}
+.report-stat-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--fg-faint);
+  text-transform: uppercase;
+  line-height: 1.5;
+}
+
+.pull-quote {
+  margin: 80px 0 0 0;
+  padding: 60px 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  text-align: center;
+}
+.pull-quote blockquote {
+  font-family: var(--serif);
+  font-size: clamp(28px, 3.8vw, 44px);
+  font-style: italic;
+  line-height: 1.25;
+  color: var(--fg);
+  max-width: 920px;
+  margin: 0 auto 24px;
+  letter-spacing: -0.01em;
+}
+.pull-quote blockquote::before { content: '"'; color: var(--copper); margin-right: 6px; }
+.pull-quote blockquote::after { content: '"'; color: var(--copper); margin-left: 6px; }
+.pull-quote-attribution {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--fg-faint);
+  text-transform: uppercase;
+}
+
+/* ─────────── §04 SIGNAL ─────────── */
+.signal {
+  border-top: 1px solid var(--rule);
+  padding-top: 100px;
+  margin-top: 100px;
+  text-align: center;
+}
+.signal-portrait {
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  background:
+    linear-gradient(135deg, #2a2522 0%, #14110f 100%),
+    radial-gradient(circle at 30% 30%, rgba(217, 119, 6, 0.2), transparent 60%);
+  margin: 0 auto 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--fg-faint);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  overflow: hidden;
+  border: 1px solid var(--rule-strong);
+}
+.signal-portrait img { width: 100%; height: 100%; object-fit: cover; }
+.signal blockquote {
+  font-family: var(--serif);
+  font-size: clamp(28px, 3.6vw, 42px);
+  line-height: 1.28;
+  font-style: italic;
+  max-width: 960px;
+  margin: 0 auto 28px;
+  letter-spacing: -0.01em;
+}
+.signal blockquote::before { content: '"'; color: var(--copper); }
+.signal blockquote::after { content: '"'; color: var(--copper); }
+.signal-name {
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.signal-role {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--fg-faint);
+  text-transform: uppercase;
+}
+
+/* ─────────── §05 CTA ─────────── */
+.cta {
+  border-top: 1px solid var(--rule);
+  padding-top: 100px;
+  margin-top: 100px;
+  text-align: center;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.cta h2 {
+  font-family: var(--serif);
+  font-size: clamp(36px, 5vw, 60px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+.cta h2 em { font-style: italic; color: var(--copper-bright); }
+.cta-sub {
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--fg-dim);
+  margin-bottom: 42px;
+  font-weight: 300;
+}
+.cta-form {
+  display: flex;
+  gap: 12px;
+  max-width: 480px;
+  margin: 0 auto 20px;
+  flex-wrap: wrap;
+}
+.cta-input {
+  flex: 1 1 240px;
+  background: rgba(245, 242, 238, 0.04);
+  border: 1px solid var(--rule-strong);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: 15px;
+  padding: 16px 20px;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.cta-input:focus { border-color: var(--copper); }
+.cta-input::placeholder { color: var(--fg-faint); }
+.cta-button {
+  background: var(--copper);
+  color: #14110f;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  padding: 16px 28px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+.cta-button:hover { background: var(--copper-bright); }
+.cta-disclaimer {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--fg-faint);
+  text-transform: uppercase;
+  margin-top: 16px;
+}
+.cta-success {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: var(--copper-bright);
+  text-transform: uppercase;
+  margin-top: 12px;
+  display: none;
+}
+.cta-success.show { display: block; }
+
+/* ─────────── §06 FOOTER ─────────── */
+footer {
+  margin-top: 120px;
+  padding: 60px 6vw 40px;
+  border-top: 1px solid var(--rule);
+  background: var(--bg-2);
+}
+.footer-grid {
+  max-width: 1480px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 60px;
+}
+@media (max-width: 800px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+}
+@media (max-width: 480px) {
+  .footer-grid { grid-template-columns: 1fr; }
+}
+.footer-col h4 {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--copper);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  font-weight: 500;
+}
+.footer-col p, .footer-col a {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--fg-dim);
+  font-weight: 300;
+  text-decoration: none;
+  display: block;
+}
+.footer-col a:hover { color: var(--copper); }
+.footer-brand-title {
+  font-family: var(--serif);
+  font-size: 24px;
+  color: var(--fg);
+  margin-bottom: 14px;
+  line-height: 1.2;
+  font-weight: 400;
+}
+.footer-brand-title em { font-style: italic; color: var(--copper-bright); }
+.footer-meta {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding-top: 28px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--fg-faint);
+  text-transform: uppercase;
+}
+
+/* ─────────── REVEAL ANIMATIONS ─────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ─────────── NAV ─────────── -->
+<nav class="nav">
+  <div class="nav-mark">Recruitin · Engineering</div>
+  <div class="nav-meta">REC-ENG-001 · v2026.05</div>
+</nav>
+
+<!-- ─────────── HERO: 7-ACT SCROLLYTELLING ─────────── -->
+<section class="hero" id="hero">
+  <div class="hero-stage">
+
+    <!-- Doc-ID corner -->
+    <div class="hero-doc-id">
+      <strong>REC-ENG-001</strong><br>
+      ING. W. ARTS<br>
+      DOESBURG, NL<br>
+      v2026.05
+    </div>
+
+    <!-- Progress dots -->
+    <div class="hero-progress" id="hero-progress">
+      <div class="hero-progress-dot active" data-act="0"></div>
+      <div class="hero-progress-dot" data-act="1"></div>
+      <div class="hero-progress-dot" data-act="2"></div>
+      <div class="hero-progress-dot" data-act="3"></div>
+      <div class="hero-progress-dot" data-act="4"></div>
+      <div class="hero-progress-dot" data-act="5"></div>
+      <div class="hero-progress-dot" data-act="6"></div>
+    </div>
+
+    <!-- 6 VIDEOS + 1 STATIC -->
+    <div class="act-media active" data-act="0">
+      <video autoplay loop muted playsinline preload="auto" poster="videos/act01_oerknal_observatorium_poster.jpg">
+        <source src="videos/act01_oerknal_observatorium.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="act-media" data-act="1">
+      <video loop muted playsinline preload="none" poster="videos/act02_eerste_principes_cave_poster.jpg">
+        <source src="videos/act02_eerste_principes_cave.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="act-media" data-act="2">
+      <video loop muted playsinline preload="none" poster="videos/act03_industrieel_stoom_poster.jpg">
+        <source src="videos/act03_industrieel_stoom.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="act-media" data-act="3">
+      <video loop muted playsinline preload="none" poster="videos/act04_tekenplank_blueprint_poster.jpg">
+        <source src="videos/act04_tekenplank_blueprint.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="act-media" data-act="4">
+      <video loop muted playsinline preload="none" poster="videos/act05_lopende_band_assembly_poster.jpg">
+        <source src="videos/act05_lopende_band_assembly.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="act-media" data-act="5">
+      <video loop muted playsinline preload="none" poster="videos/act06_digitaal_crt_poster.jpg">
+        <source src="videos/act06_digitaal_crt.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="act-media" data-act="6">
+      <img src="videos/act07_destack_static.jpg" alt="The Stack">
+    </div>
+
+    <!-- TEXT OVERLAYS (7 acts) -->
+    <div class="act-text active" data-act="0">
+      <div class="act-number">Act 01 / Oerknal</div>
+      <h1 class="act-title">Alles begint <em>met één vraag.</em></h1>
+      <p class="act-caption">Wie. Wat. Waarom. Voor elk systeem dat ooit gewerkt heeft, was er eerst iemand die de juiste vraag stelde.</p>
+    </div>
+    <div class="act-text" data-act="1">
+      <div class="act-number">Act 02 / Eerste Principes</div>
+      <h1 class="act-title">Tellen. <em>Vastleggen.</em> Doorgeven.</h1>
+      <p class="act-caption">Voordat er processen waren, waren er strepen op de muur. Recruitment begint waar ambacht begon: bij meten wat telt.</p>
+    </div>
+    <div class="act-text" data-act="2">
+      <div class="act-number">Act 03 / Industrieel Tijdperk</div>
+      <h1 class="act-title">Schaal. Snelheid. <em>Systeem.</em></h1>
+      <p class="act-caption">Stoom veranderde alles. Niet door magie — door discipline. Hetzelfde geldt voor sourcing: schaal komt uit een werkend systeem.</p>
+    </div>
+    <div class="act-text" data-act="3">
+      <div class="act-number">Act 04 / Tekenplank</div>
+      <h1 class="act-title">Plannen. Specs. <em>Tolerantie.</em></h1>
+      <p class="act-caption">Een goede ingenieur ontwerpt eerst, bouwt daarna. Een goede recruiter scopet eerst, sourcet daarna. Geen vacaturetekst zonder intake.</p>
+    </div>
+    <div class="act-text" data-act="4">
+      <div class="act-number">Act 05 / Lopende Band</div>
+      <h1 class="act-title">Herhaalbaar. <em>Voorspelbaar.</em> Beheerst.</h1>
+      <p class="act-caption">Ford bewees: kwaliteit komt uit herhaalbaarheid, niet uit heldendaden. Pipeline-uitval is geen pech — het is een onbeheerst proces.</p>
+    </div>
+    <div class="act-text" data-act="5">
+      <div class="act-number">Act 06 / Digitaal</div>
+      <h1 class="act-title">Data. Patronen. <em>Beslissingen.</em></h1>
+      <p class="act-caption">De CRT-monitor was het eerste venster op patroonherkenning op schaal. Vandaag is dat AI. Het werk is hetzelfde: zien wat anderen missen.</p>
+    </div>
+    <div class="act-text" data-act="6">
+      <div class="act-number">Act 07 / De Stack</div>
+      <h1 class="act-title">Geen idee. <em>Een ontwerp.</em></h1>
+      <p class="act-caption">Vijf modules. Vier jaar werk. Bewezen in productie bij Veco, Beutech, Euromaster. Dit is geen pitch — dit is de blueprint.</p>
+    </div>
+
+    <!-- Scroll hint -->
+    <div class="scroll-hint" id="scroll-hint">Scroll</div>
+  </div>
+</section>
+
+<!-- ─────────── §01 MANIFEST ─────────── -->
+<section class="content">
+  <div class="manifest">
+    <div class="manifest-portrait reveal">
+      <img src="videos/doc-A-refinery.jpg" alt="Ing. W. Arts · raffinaderij · Oil &amp; Gas">
+    </div>
+    <div class="manifest-text reveal">
+      <div class="section-label">§01 · Manifest</div>
+      <h2>Recruitment is een <em>engineering vak.</em><br>Behandel het zo.</h2>
+      <p>Vier jaar geleden begon ik met één vraag: <strong>waarom is recruitment in 2022 nog steeds een ambacht van anekdotes en onderbuik?</strong> Elke andere kennisbranche — finance, marketing, engineering zelf — had al lang een meetbaar, herhaalbaar systeem. Recruitment niet.</p>
+      <p>Dus ben ik gaan bouwen. Geen tooling. Geen ATS-replacement. Maar een <strong>stack van vijf productie-prompts</strong> die de meest tijdrovende onderdelen van het werk samenpersen: sourcing van uren naar minuten, intake van dagen naar één gesprek, screening van bias naar score.</p>
+      <p>De stack draait nu in productie. Bij Veco, Beutech, Euromaster en een aantal kleinere klanten. <strong>€519.000 aan stilgevallen kandidaten teruggehaald in 11 dagen</strong> — niet als marketingclaim, maar als gedocumenteerd resultaat.</p>
+      <p>Dit is geen pitch voor een tool. Dit is het werk van Ing. W. Arts. Built to be experienced.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── §02 THE STACK ─────────── -->
+<section class="content">
+  <div class="stack">
+    <div class="stack-header reveal">
+      <h2>The <em>Stack.</em></h2>
+      <p>Vijf modules. Elk een specifiek werkproduct. Geen "AI-magic" — gewoon gestructureerde prompts die domein-expertise codificeren. Bewezen in productie sinds 2022.</p>
+    </div>
+
+    <!-- M01 -->
+    <div class="module reveal">
+      <div class="module-content">
+        <div class="module-id">M01 · Sourcing Engine</div>
+        <h3 class="module-title">Boolean queries die <em>doel raken.</em></h3>
+        <p class="module-desc">Van een intake naar een hyperspecifieke Boolean search string voor LinkedIn, Indeed of niche-databases. Geen 12 uur browsen — 25 minuten compacte query-design met 847 relevante hits.</p>
+        <div class="module-stats">
+          <div class="module-stat">
+            <span class="module-stat-num">25 min</span>
+            <span class="module-stat-label">Van briefing tot query</span>
+          </div>
+          <div class="module-stat">
+            <span class="module-stat-num">847</span>
+            <span class="module-stat-label">Hits gem. per query</span>
+          </div>
+        </div>
+      </div>
+      <div class="module-visual">
+        <span class="module-visual-label">[ M01 · BOOLEAN SOURCING UI ]</span>
+      </div>
+    </div>
+
+    <!-- M02 -->
+    <div class="module reveal">
+      <div class="module-content">
+        <div class="module-id">M02 · Outreach Generator</div>
+        <h3 class="module-title">InMails met <em>5,1× hogere respons.</em></h3>
+        <p class="module-desc">Gepersonaliseerde InMails op basis van kandidaat-profiel, recente werkervaring en de specifieke vacature. Geen template-spam — elke outreach voelt als handgeschreven werk.</p>
+        <div class="module-stats">
+          <div class="module-stat">
+            <span class="module-stat-num">41%</span>
+            <span class="module-stat-label">Response rate</span>
+          </div>
+          <div class="module-stat">
+            <span class="module-stat-num">5,1×</span>
+            <span class="module-stat-label">Boven benchmark (8%)</span>
+          </div>
+        </div>
+      </div>
+      <div class="module-visual">
+        <span class="module-visual-label">[ M02 · INMAIL GENERATOR UI ]</span>
+      </div>
+    </div>
+
+    <!-- M03 -->
+    <div class="module reveal">
+      <div class="module-content">
+        <div class="module-id">M03 · Intake Synthesizer</div>
+        <h3 class="module-title">Van gesprek naar <em>vacaturetekst.</em></h3>
+        <p class="module-desc">Een 30-minuten intake-call wordt automatisch een complete vacaturetekst — inclusief profiel, must-haves, deal-breakers, en de zes vragen die je hiring manager normaal pas in iteratie 3 stelt.</p>
+        <div class="module-stats">
+          <div class="module-stat">
+            <span class="module-stat-num">90 min</span>
+            <span class="module-stat-label">Tot vacaturetekst</span>
+          </div>
+          <div class="module-stat">
+            <span class="module-stat-num">5,3×</span>
+            <span class="module-stat-label">Sneller dan manual</span>
+          </div>
+        </div>
+      </div>
+      <div class="module-visual">
+        <span class="module-visual-label">[ M03 · INTAKE SYNTHESIZER UI ]</span>
+      </div>
+    </div>
+
+    <!-- M04 -->
+    <div class="module reveal">
+      <div class="module-content">
+        <div class="module-id">M04 · Screening Score</div>
+        <h3 class="module-title">CV-match in <em>vier minuten.</em></h3>
+        <p class="module-desc">Een CV wordt gescoord tegen de vacature-specs op een 100-puntsschaal, met onderbouwing per criterium. Geen bias-gevoel, geen gut-feel — een gestructureerd oordeel dat reproduceerbaar is.</p>
+        <div class="module-stats">
+          <div class="module-stat">
+            <span class="module-stat-num">4 min</span>
+            <span class="module-stat-label">Per CV</span>
+          </div>
+          <div class="module-stat">
+            <span class="module-stat-num">87/100</span>
+            <span class="module-stat-label">Gem. top-3 score</span>
+          </div>
+        </div>
+      </div>
+      <div class="module-visual">
+        <span class="module-visual-label">[ M04 · SCREENING SCORE UI ]</span>
+      </div>
+    </div>
+
+    <!-- M05 -->
+    <div class="module reveal">
+      <div class="module-content">
+        <div class="module-id">M05 · Pipeline Diagnostic</div>
+        <h3 class="module-title">Vastgelopen deals — <em>teruggehaald.</em></h3>
+        <p class="module-desc">Een full-pipeline scan identificeert kandidaten en deals die te lang stilstaan, met specifieke reactivatie-acties per stagnatietype. Bij Veco: €519k aan dood gewaande pipeline weer in beweging gebracht.</p>
+        <div class="module-stats">
+          <div class="module-stat">
+            <span class="module-stat-num">€519k</span>
+            <span class="module-stat-label">Veco case Q4 2025</span>
+          </div>
+          <div class="module-stat">
+            <span class="module-stat-num">60%</span>
+            <span class="module-stat-label">Recovered in 11 dagen</span>
+          </div>
+        </div>
+      </div>
+      <div class="module-visual">
+        <span class="module-visual-label">[ M05 · PIPELINE DIAGNOSTIC UI ]</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── §03 FIELD REPORT ─────────── -->
+<section class="content">
+  <div class="field-report">
+    <div class="field-report-grid">
+      <div class="field-report-image reveal">
+        <img src="videos/doc-B-construction.jpg" alt="Ing. W. Arts · bouwplaats · Construction">
+      </div>
+      <div class="field-report-text reveal">
+        <div class="section-label">§03 · Field Report</div>
+        <div class="field-report-meta">Veco · HSE Engineer · Renewable Energy</div>
+        <h2>Van 4 weken<br>naar <em>11 dagen.</em></h2>
+        <div class="field-report-body">
+          <p>Veco zat vast op een HSE Engineer-positie voor een offshore wind-project. Vier weken open, 23 sollicitaties, geen enkele <strong>goed genoeg</strong>. De ATS stond vol — de pijplijn was uitgeput.</p>
+          <p>De Pipeline Diagnostic (M05) draaide in 2 uur door alle 23 profielen. Acht kandidaten waren te snel afgeschreven; vier hadden onbenutte relevantie. Een nieuwe sourcing-ronde (M01) leverde 19 extra hits — geen van de 19 had ook maar één recruiter in NL eerder benaderd.</p>
+          <p>Resultaat in 11 dagen: <strong>3 kandidaten op intake, 1 plaatsing, €519.000 aan stilgevallen pipeline weer in beweging</strong>. De HSE-rol werd ingevuld door een kandidaat die in week 1 was afgewezen — verkeerd gelezen door de eerste screening.</p>
+        </div>
+        <div class="report-stats">
+          <div class="report-stat">
+            <span class="report-stat-num">11</span>
+            <span class="report-stat-label">Dagen tot hire</span>
+          </div>
+          <div class="report-stat">
+            <span class="report-stat-num">€519k</span>
+            <span class="report-stat-label">Pipeline recovered</span>
+          </div>
+          <div class="report-stat">
+            <span class="report-stat-num">60%</span>
+            <span class="report-stat-label">Recovery rate</span>
+          </div>
+          <div class="report-stat">
+            <span class="report-stat-num">3.6×</span>
+            <span class="report-stat-label">Sneller dan SLA</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pull-quote reveal">
+      <blockquote>Wouter, ik weet niet eens meer waar ik moet beginnen om uit te leggen wat je voor ons gedaan hebt.</blockquote>
+      <div class="pull-quote-attribution">— HR Director · Veco · Q4 2025</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── §04 SIGNAL ─────────── -->
+<section class="content">
+  <div class="signal reveal">
+    <div class="section-label" style="justify-content: center;">§04 · Signal</div>
+    <div class="signal-portrait">
+      <span>TESTIMONIAL</span>
+    </div>
+    <blockquote>Geen consultant heeft dit ooit voor elkaar gekregen. Wat Wouter levert is geen recruitment — het is een werkend systeem.</blockquote>
+    <div class="signal-name">HR Director</div>
+    <div class="signal-role">Mid-market industrieel · Gelderland · 2025</div>
+  </div>
+</section>
+
+<!-- ─────────── §05 CTA ─────────── -->
+<section class="content">
+  <div class="cta reveal">
+    <div class="section-label" style="justify-content: center;">§05 · The Stack 2026</div>
+    <h2>Download <em>The Stack.</em></h2>
+    <p class="cta-sub">De volledige documentatie van alle vijf modules — inclusief use-cases, voorbeeld-outputs, en de implementatie-checklist. PDF, 28 pagina's. Geen sales-call. Direct in je inbox.</p>
+    <form class="cta-form" id="ctaForm" onsubmit="handleSubmit(event)">
+      <input type="email" class="cta-input" placeholder="je@bedrijf.nl" required>
+      <button type="submit" class="cta-button">Stuur de PDF →</button>
+    </form>
+    <div class="cta-disclaimer">Geen spam · Geen sales-call · Direct in je inbox</div>
+    <div class="cta-success" id="ctaSuccess">✓ Verstuurd. Check je inbox binnen 60 sec.</div>
+  </div>
+</section>
+
+<!-- ─────────── §06 FOOTER ─────────── -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <div class="footer-brand-title">Recruitment, <em>Reengineered.</em></div>
+      <p>Built &amp; maintained by Ing. W. Arts · Doesburg, Nederland<br>Bewezen in productie sinds 2022.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <a href="mailto:warts@recruitin.nl">warts@recruitin.nl</a>
+      <a href="tel:+31614314593">+31 6 14 31 45 93</a>
+    </div>
+    <div class="footer-col">
+      <h4>Network</h4>
+      <a href="https://recruitin.nl">recruitin.nl</a>
+      <a href="https://wouter-arts.nl">wouter-arts.nl</a>
+      <a href="https://werving-engineering.nl">werving-engineering.nl</a>
+    </div>
+    <div class="footer-col">
+      <h4>Document</h4>
+      <p>REC-ENG-001<br>BUILD: STACK-2026.v1.0<br>RELEASED: 2026.05</p>
+    </div>
+  </div>
+  <div class="footer-meta">
+    <span>© 2026 RECRUITIN B.V. · KvK 12345678</span>
+    <span>BUILT TO BE EXPERIENCED.</span>
+  </div>
+</footer>
+
+<script>
+/* ─────────── HERO SCROLLYTELLING ─────────── */
+(function() {
+  const hero = document.getElementById('hero');
+  const stage = hero.querySelector('.hero-stage');
+  const medias = document.querySelectorAll('.act-media');
+  const texts = document.querySelectorAll('.act-text');
+  const dots = document.querySelectorAll('.hero-progress-dot');
+  const scrollHint = document.getElementById('scroll-hint');
+  const totalActs = 7;
+
+  let currentAct = 0;
+  let ticking = false;
+
+  function updateAct() {
+    const rect = hero.getBoundingClientRect();
+    const heroHeight = hero.offsetHeight;
+    const viewportHeight = window.innerHeight;
+    const scrolled = -rect.top;
+    const totalScroll = heroHeight - viewportHeight;
+    let progress = Math.max(0, Math.min(1, scrolled / totalScroll));
+
+    // Hide scroll hint after small scroll
+    if (scrolled > 50) scrollHint.classList.add('hidden');
+    else scrollHint.classList.remove('hidden');
+
+    const act = Math.min(totalActs - 1, Math.floor(progress * totalActs));
+
+    if (act !== currentAct) {
+      medias.forEach(m => m.classList.remove('active'));
+      texts.forEach(t => t.classList.remove('active'));
+      dots.forEach(d => d.classList.remove('active'));
+
+      const newMedia = document.querySelector('.act-media[data-act="' + act + '"]');
+      const newText = document.querySelector('.act-text[data-act="' + act + '"]');
+      const newDot = document.querySelector('.hero-progress-dot[data-act="' + act + '"]');
+
+      if (newMedia) newMedia.classList.add('active');
+      if (newText) newText.classList.add('active');
+      if (newDot) newDot.classList.add('active');
+
+      // Play active video, pause+rewind others (iOS-safe)
+      medias.forEach((m, i) => {
+        const v = m.querySelector('video');
+        if (!v) return;
+        if (i === act) {
+          // iOS Safari: load() before play() if not yet started
+          if (v.readyState === 0) {
+            try { v.load(); } catch (e) {}
+          }
+          const p = v.play();
+          if (p && typeof p.catch === 'function') {
+            p.catch(() => {
+              // Autoplay blocked → reveal poster anyway (default state)
+            });
+          }
+        } else {
+          try { v.pause(); } catch (e) {}
+        }
+      });
+
+      currentAct = act;
+    }
+
+    ticking = false;
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      window.requestAnimationFrame(updateAct);
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', updateAct);
+
+  // Dot click → scroll to that act
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      const heroHeight = hero.offsetHeight;
+      const viewportHeight = window.innerHeight;
+      const totalScroll = heroHeight - viewportHeight;
+      const targetScroll = hero.offsetTop + (totalScroll * (i / totalActs)) + 10;
+      window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+    });
+  });
+
+  // Initial state
+  updateAct();
+
+  // iOS Safari: force-start the first video on any first user interaction
+  let firstInteraction = false;
+  function kickstart() {
+    if (firstInteraction) return;
+    firstInteraction = true;
+    const firstVideo = document.querySelector('.act-media[data-act="0"] video');
+    if (firstVideo) {
+      const p = firstVideo.play();
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+    }
+  }
+  ['touchstart', 'click', 'scroll'].forEach(evt => {
+    window.addEventListener(evt, kickstart, { once: true, passive: true });
+  });
+})();
+
+/* ─────────── REVEAL ON SCROLL ─────────── */
+(function() {
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+
+  reveals.forEach(el => io.observe(el));
+})();
+
+/* ─────────── CTA FORM ─────────── */
+function handleSubmit(e) {
+  e.preventDefault();
+  const form = document.getElementById('ctaForm');
+  const success = document.getElementById('ctaSuccess');
+  const email = form.querySelector('input').value;
+
+  // TODO: hook up to Lemlist / Mailerlite / Jotform endpoint
+  // For now: simulate success and open mail composer as fallback
+  console.log('CTA submit:', email);
+
+  form.style.display = 'none';
+  success.classList.add('show');
+
+  // Send to Wouter as fallback
+  setTimeout(() => {
+    window.location.href = 'mailto:warts@recruitin.nl?subject=Stack%202026%20PDF%20aanvraag&body=Email%3A%20' + encodeURIComponent(email);
+  }, 1500);
+}
+</script>
+
+</body>
+</html>
