@@ -262,6 +262,10 @@ section.content {
   section.content { padding: 80px 22px; }
 }
 
+section.content.compact { padding-top: 32px; padding-bottom: 32px; }
+@media (max-width: 768px) {
+  section.content.compact { padding-top: 40px; padding-bottom: 40px; }
+
 .section-label {
   font-family: var(--mono);
   font-size: 11px;
@@ -580,8 +584,8 @@ section.content {
 }
 
 .pull-quote {
-  margin: 80px 0 0 0;
-  padding: 60px 0;
+  margin: 32px 0 0 0;
+  padding: 40px 0;
   border-top: 1px solid var(--rule);
   border-bottom: 1px solid var(--rule);
   text-align: center;
@@ -608,9 +612,6 @@ section.content {
 
 /* ─────────── §04 SIGNAL ─────────── */
 .signal {
-  border-top: 1px solid var(--rule);
-  padding-top: 48px;
-  margin-top: 48px;
   text-align: center;
   position: relative;
 }
@@ -682,9 +683,6 @@ section.content {
 
 /* ─────────── §05 CTA ─────────── */
 .cta {
-  border-top: 1px solid var(--rule);
-  padding-top: 48px;
-  margin-top: 48px;
   text-align: center;
   max-width: 720px;
   margin-left: auto;
@@ -1619,7 +1617,7 @@ footer {
 </section>
 
 <!-- ─────────── §04 SIGNAL ─────────── -->
-<section class="content">
+<section class="content compact">
   <div class="signal reveal">
     <div class="section-label" style="justify-content: center;">§04 · Signal</div>
     <div class="signal-portrait" aria-hidden="true"></div>
@@ -1635,7 +1633,7 @@ footer {
 </section>
 
 <!-- ─────────── §05 CTA ─────────── -->
-<section class="content">
+<section class="content compact">
   <div class="cta reveal">
     <div class="section-label" style="justify-content: center;">§05 · The Stack 2026</div>
     <h2>Download <em>The Stack.</em></h2>
