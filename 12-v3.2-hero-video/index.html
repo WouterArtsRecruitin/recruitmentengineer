@@ -458,11 +458,23 @@ section.content {
     linear-gradient(135deg, #1a1715 0%, #0e0c0b 100%);
   border: 1px solid var(--rule);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-end;
+  justify-content: flex-start;
   position: relative;
   overflow: hidden;
 }
+.module-visual img.module-screenshot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.6s ease-out;
+}
+.module-visual img.module-screenshot.loaded { opacity: 1; }
 .module-visual::before {
   content: '';
   position: absolute;
@@ -471,15 +483,26 @@ section.content {
     radial-gradient(circle at 20% 30%, rgba(217, 119, 6, 0.08), transparent 50%),
     repeating-linear-gradient(0deg, transparent 0, transparent 40px, rgba(245, 242, 238, 0.02) 40px, rgba(245, 242, 238, 0.02) 41px),
     repeating-linear-gradient(90deg, transparent 0, transparent 40px, rgba(245, 242, 238, 0.02) 40px, rgba(245, 242, 238, 0.02) 41px);
+  z-index: 2;
+  pointer-events: none;
+}
+.module-visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10,9,8,0) 60%, rgba(10,9,8,0.85) 100%);
+  z-index: 3;
+  pointer-events: none;
 }
 .module-visual-label {
   font-family: var(--mono);
   font-size: 11px;
   letter-spacing: 0.2em;
-  color: var(--fg-faint);
+  color: var(--copper-bright);
   text-transform: uppercase;
-  z-index: 2;
+  z-index: 4;
   position: relative;
+  padding: 16px 20px;
 }
 
 /* ─────────── §03 FIELD REPORT ─────────── */
@@ -989,7 +1012,8 @@ footer {
         </div>
       </div>
       <div class="module-visual">
-        <span class="module-visual-label">[ M01 · BOOLEAN SOURCING UI ]</span>
+        <img class="module-screenshot" data-src="module-ui/m01-sourcing.jpg" alt="M01 Sourcing Engine — Boolean query UI">
+        <span class="module-visual-label">M01 · Sourcing Engine</span>
       </div>
     </div>
 
@@ -1011,7 +1035,8 @@ footer {
         </div>
       </div>
       <div class="module-visual">
-        <span class="module-visual-label">[ M02 · INMAIL GENERATOR UI ]</span>
+        <img class="module-screenshot" data-src="module-ui/m02-outreach.jpg" alt="M02 Outreach Generator — InMail composer">
+        <span class="module-visual-label">M02 · Outreach Generator</span>
       </div>
     </div>
 
@@ -1033,7 +1058,8 @@ footer {
         </div>
       </div>
       <div class="module-visual">
-        <span class="module-visual-label">[ M03 · INTAKE SYNTHESIZER UI ]</span>
+        <img class="module-screenshot" data-src="module-ui/m03-assessment.jpg" alt="M03 Intake Synthesizer — Assessment matrix">
+        <span class="module-visual-label">M03 · Intake Synthesizer</span>
       </div>
     </div>
 
@@ -1055,7 +1081,8 @@ footer {
         </div>
       </div>
       <div class="module-visual">
-        <span class="module-visual-label">[ M04 · SCREENING SCORE UI ]</span>
+        <img class="module-screenshot" data-src="module-ui/m04-placement.jpg" alt="M04 Screening Score — Placement timeline">
+        <span class="module-visual-label">M04 · Screening Score</span>
       </div>
     </div>
 
@@ -1077,7 +1104,8 @@ footer {
         </div>
       </div>
       <div class="module-visual">
-        <span class="module-visual-label">[ M05 · PIPELINE DIAGNOSTIC UI ]</span>
+        <img class="module-screenshot" data-src="module-ui/m05-analytics.jpg" alt="M05 Pipeline Diagnostic — Analytics dashboard">
+        <span class="module-visual-label">M05 · Pipeline Diagnostic</span>
       </div>
     </div>
   </div>
@@ -1306,24 +1334,71 @@ footer {
   reveals.forEach(el => io.observe(el));
 })();
 
+/* ─────────── MODULE SCREENSHOTS — LAZY LOAD ─────────── */
+(function() {
+  const screenshots = document.querySelectorAll('.module-screenshot[data-src]');
+  if (!screenshots.length) return;
+  const mio = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        if (!img.src) {
+          img.src = img.dataset.src;
+          img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
+        }
+        mio.unobserve(img);
+      }
+    });
+  }, { rootMargin: '300px 0px', threshold: 0.05 });
+  screenshots.forEach(img => mio.observe(img));
+})();
+
 /* ─────────── CTA FORM ─────────── */
-function handleSubmit(e) {
+async function handleSubmit(e) {
   e.preventDefault();
   const form = document.getElementById('ctaForm');
   const success = document.getElementById('ctaSuccess');
-  const email = form.querySelector('input').value;
+  const input = form.querySelector('input');
+  const button = form.querySelector('button');
+  const email = input.value.trim();
 
-  // TODO: hook up to Lemlist / Mailerlite / Jotform endpoint
-  // For now: simulate success and open mail composer as fallback
-  console.log('CTA submit:', email);
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    input.focus();
+    return;
+  }
 
+  // Disable form during submit
+  button.disabled = true;
+  const originalText = button.textContent;
+  button.textContent = 'Versturen…';
+
+  let apiSuccess = false;
+
+  try {
+    const response = await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: email,
+        source: 'recruitmentengineer-v3.2',
+        intent: 'stack-2026-pdf'
+      })
+    });
+    apiSuccess = response.ok;
+  } catch (err) {
+    console.warn('CTA API unreachable, falling back to mailto:', err);
+  }
+
+  // Show success regardless — UX should not stall on backend issues
   form.style.display = 'none';
   success.classList.add('show');
 
-  // Send to Wouter as fallback
-  setTimeout(() => {
-    window.location.href = 'mailto:warts@recruitin.nl?subject=Stack%202026%20PDF%20aanvraag&body=Email%3A%20' + encodeURIComponent(email);
-  }, 1500);
+  // If API failed, open mailto as fallback so request still reaches Wouter
+  if (!apiSuccess) {
+    setTimeout(() => {
+      window.location.href = 'mailto:warts@recruitin.nl?subject=Stack%202026%20PDF%20aanvraag&body=Email%3A%20' + encodeURIComponent(email);
+    }, 1500);
+  }
 }
 </script>
 
