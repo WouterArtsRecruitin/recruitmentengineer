@@ -304,7 +304,7 @@ section.content {
   justify-content: center;
 }
 .manifest-portrait::after {
-  content: 'DOC-A · RAFFINADERIJ · OIL & GAS · NL';
+  content: 'DOC-A · ING. W. ARTS · ARCHITECT · NL';
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 0.2em;
@@ -609,29 +609,52 @@ section.content {
 /* ─────────── §04 SIGNAL ─────────── */
 .signal {
   border-top: 1px solid var(--rule);
-  padding-top: 100px;
-  margin-top: 100px;
+  padding-top: 80px;
+  margin-top: 80px;
   text-align: center;
+  position: relative;
 }
-.signal-portrait {
-  width: 120px; height: 120px;
-  border-radius: 50%;
-  background:
-    linear-gradient(135deg, #2a2522 0%, #14110f 100%),
-    radial-gradient(circle at 30% 30%, rgba(217, 119, 6, 0.2), transparent 60%);
-  margin: 0 auto 32px;
+.signal-meta {
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   font-family: var(--mono);
   font-size: 10px;
+  letter-spacing: 0.2em;
   color: var(--fg-faint);
-  letter-spacing: 0.18em;
   text-transform: uppercase;
-  overflow: hidden;
-  border: 1px solid var(--rule-strong);
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
 }
-.signal-portrait img { width: 100%; height: 100%; object-fit: cover; }
+.signal-meta span:nth-child(2) { color: var(--copper); }
+@media (max-width: 600px) {
+  .signal-meta { flex-direction: column; gap: 8px; text-align: center; }
+}
+.signal-portrait {
+  width: 64px;
+  height: 4px;
+  background: linear-gradient(90deg, transparent 0%, var(--copper) 30%, var(--copper) 70%, transparent 100%);
+  border-radius: 2px;
+  margin: 0 auto 48px;
+  display: block;
+  position: relative;
+}
+.signal-portrait::before,
+.signal-portrait::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--copper);
+  transform: translateY(-50%);
+}
+.signal-portrait::before { left: 24px; }
+.signal-portrait::after { right: 24px; }
 .signal blockquote {
   font-family: var(--serif);
   font-size: clamp(28px, 3.6vw, 42px);
@@ -934,7 +957,7 @@ footer {
 <section class="content">
   <div class="manifest">
     <div class="manifest-portrait reveal">
-      <img src="videos/doc-A-refinery.jpg" alt="Ing. W. Arts · raffinaderij · Oil &amp; Gas">
+      <img src="videos/doc-A-portrait.jpg" alt="Ing. W. Arts · portret · architect van de stack">
     </div>
     <div class="manifest-text reveal">
       <div class="section-label">§01 · Manifest</div>
@@ -1599,12 +1622,15 @@ footer {
 <section class="content">
   <div class="signal reveal">
     <div class="section-label" style="justify-content: center;">§04 · Signal</div>
-    <div class="signal-portrait">
-      <span>TESTIMONIAL</span>
-    </div>
+    <div class="signal-portrait" aria-hidden="true"></div>
     <blockquote>Geen consultant heeft dit ooit voor elkaar gekregen. Wat Wouter levert is geen recruitment — het is een werkend systeem.</blockquote>
     <div class="signal-name">HR Director</div>
     <div class="signal-role">Mid-market industrieel · Gelderland · 2025</div>
+    <div class="signal-meta">
+      <span>REF · SIG-2025-Q4</span>
+      <span>· VERIFIED ·</span>
+      <span>ANONIEM OP VERZOEK</span>
+    </div>
   </div>
 </section>
 
